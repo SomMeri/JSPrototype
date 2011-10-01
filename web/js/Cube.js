@@ -40,7 +40,7 @@ var Cube = function (width, height, depth) {
   this.computeCentroids();
   this.computeNormals();
 
-}
+};
 
 Cube.prototype = new THREE.Geometry();
 Cube.prototype.constructor = Cube;

@@ -37,7 +37,28 @@ body {
 
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
+				appendUpperRow(container);
+				
+				initCamera();
+				scene = new THREE.Scene();
+				projector = new THREE.Projector();
+				ray = new THREE.Ray( camera.position, null );
 
+				initFictionalBottomLines(scene);
+				initPlane(scene);
+				initCube(scene);
+				initLights(scene);
+				
+				onMouseDownPosition = new THREE.Vector2();
+
+				renderer = new THREE.CanvasRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				container.appendChild(renderer.domElement);
+				initEventListeners();
+			}
+
+			function appendUpperRow(container) {
 				var info = document.createElement( 'div' );
 				info.style.position = 'absolute';
 				info.style.top = '5px';
@@ -45,26 +66,36 @@ body {
 				info.style.textAlign = 'center';
 				info.innerHTML = '<span style="color: #444; background-color: #fff; border-bottom: 1px solid #ddd; padding: 8px 10px; text-transform: uppercase;"><strong>0 - 9</strong>: colors, <strong>click</strong>: add voxel, <strong>shift + click</strong>: remove voxel, <strong>drag</strong>: rotate | <a id="link" href="" target="_blank">share</a> <a href="javascript:save();">save</a> <a href="javascript:clear();">clear</a></span>';
 				container.appendChild( info );
- 
+			}
+			
+			function initEventListeners() {
+				document.addEventListener( 'keydown', onDocumentKeyDown, false );
+				document.addEventListener( 'keyup', onDocumentKeyUp, false );
+
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+
+				document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
+			}
+			
+			function initCamera() {
 				camera = new THREE.Camera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.position.x = radious * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
 				camera.position.y = radious * Math.sin( phi * Math.PI / 360 );
 				camera.position.z = radious * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
 				camera.target.position.y = 200;
-
-				scene = new THREE.Scene();
-
-				// Grid
-
+			}
+			
+			function initFictionalBottomLines(scene) {
 				var geometry = new THREE.Geometry();
 				geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( - 500, 0, 0 ) ) );
 				geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( 500, 0, 0 ) ) );
 
 				linesMaterial = new THREE.LineColorMaterial( 0x000000, 0.2 );
-				
-	            // paint bottom lines
-				for ( var i = 0; i <= 20; i ++ ) {
 
+        		// paint bottom lines
+				for ( var i = 0; i <= 20; i ++ ) {
 					var line = new THREE.Line( geometry, linesMaterial );
 					line.position.z = ( i * 50 ) - 500;
 					scene.addObject( line );
@@ -73,30 +104,26 @@ body {
 					line.position.x = ( i * 50 ) - 500;
 					line.rotation.y = 90 * Math.PI / 180;
 					scene.addObject( line );
-
 				}
-
-				projector = new THREE.Projector();
-
+			}
+			
+			function initPlane(scene) {
 				plane = new THREE.Mesh( new Plane( 1000, 1000 ) );
 				plane.rotation.x = - 90 * Math.PI / 180;
 				scene.addObject( plane );
+			}
 
+			function initCube(scene) {
 				//cursor cube (the light one, see throught it)
 				cube = new Cube( 50, 50, 50 );
-
-				ray = new THREE.Ray( camera.position, null );
-
 				// last parameter is transparency <-> solidness
 				brush = new THREE.Mesh( cube, new THREE.MeshColorFillMaterial( colors[ color ], 0.5 ) );
 				brush.position.y = 2000;
 				brush.overdraw = true;
 				scene.addObject( brush );
+			}
 
-				onMouseDownPosition = new THREE.Vector2();
-
-				// Lights
-
+			function initLights(scene) {
 				var ambientLight = new THREE.AmbientLight( 0x404040 );
 				scene.addLight( ambientLight );
 
@@ -113,27 +140,8 @@ body {
 				directionalLight.position.z = - 0.75;
 				directionalLight.position.normalize();
 				scene.addLight( directionalLight );
-
-				renderer = new THREE.CanvasRenderer();
-				renderer.setSize( window.innerWidth, window.innerHeight );
-
-				container.appendChild(renderer.domElement);
-
-				document.addEventListener( 'keydown', onDocumentKeyDown, false );
-				document.addEventListener( 'keyup', onDocumentKeyUp, false );
-
-				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-				document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-
-				document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
-
-				if ( window.location.hash ) {
-					buildFromHash();
-				}
-
 			}
-
+			
 			function onDocumentKeyDown( event ) {
 
 				switch( event.keyCode ) {
@@ -257,7 +265,6 @@ body {
 
 				}
 
-				updateHash();
 				interact();
 				render();
 
@@ -286,125 +293,6 @@ body {
 
 			}
 
-			function buildFromHash() {
-
-				var hash = window.location.hash.substr( 1 ),
-				version = hash.substr( 0, 2 );
-
-				if ( version == "A/" ) {
-
-					var current = { x: 0, y: 0, z: 0, c: 0 }
-					var data = decode( hash.substr( 2 ) );
-					var i = 0, l = data.length;
-
-					while ( i < l ) {
-
-						var code = data[ i ++ ].toString( 2 );
-
-						if ( code.charAt( 1 ) == "1" ) current.x += data[ i ++ ] - 32;
-						if ( code.charAt( 2 ) == "1" ) current.y += data[ i ++ ] - 32;
-						if ( code.charAt( 3 ) == "1" ) current.z += data[ i ++ ] - 32;
-						if ( code.charAt( 4 ) == "1" ) current.c += data[ i ++ ] - 32;
-						if ( code.charAt( 0 ) == "1" ) {
-
-							var voxel = new THREE.Mesh( cube, new THREE.MeshColorFillMaterial( colors[ current.c ] ) );
-							voxel.position.x = current.x * 50 + 25;
-							voxel.position.y = current.y * 50 + 25;
-							voxel.position.z = current.z * 50 + 25;
-							voxel.overdraw = true;
-							scene.addObject( voxel );
-
-						}
-					}
-
-				} else {
-
-					var data = decode( hash );
-
-					for ( var i = 0; i < data.length; i += 4 ) {
-
-						var voxel = new THREE.Mesh( cube, new THREE.MeshColorFillMaterial( colors[ data[ i + 3 ] ] ) );
-						voxel.position.x = ( data[ i ] - 20 ) * 25;
-						voxel.position.y = ( data[ i + 1 ] + 1 ) * 25;
-						voxel.position.z = ( data[ i + 2 ] - 20 ) * 25;
-						voxel.overdraw = true;
-						scene.addObject( voxel );
-
-					}
-
-				}
-
-				updateHash();
-
-			}
-
-			function updateHash() {
-
-				var data = [],
-				current = { x: 0, y: 0, z: 0, c: 0 },
-				last = { x: 0, y: 0, z: 0, c: 0 },
-				code;
-
-				for ( var i in scene.objects ) {
-
-					object = scene.objects[ i ];
-
-					if ( object instanceof THREE.Mesh && object !== plane && object !== brush ) {
-
-						current.x = ( object.position.x - 25 ) / 50;
-						current.y = ( object.position.y - 25 ) / 50;
-						current.z = ( object.position.z - 25 ) / 50;
-						current.c = colors.indexOf( object.material[ 0 ].color.hex & 0xffffff );
-
-						code = 0;
-
-						if ( current.x != last.x ) code += 1000;
-						if ( current.y != last.y ) code += 100;
-						if ( current.z != last.z ) code += 10;
-						if ( current.c != last.c ) code += 1;
-
-						code += 10000;
-
-						data.push( parseInt( code, 2 ) );
-
-						if ( current.x != last.x ) {
-
-							data.push( current.x - last.x + 32 );
-							last.x = current.x;
-
-						}
-
-						if ( current.y != last.y ) {
-
-							data.push( current.y - last.y + 32 );
-							last.y = current.y;
-
-						}
-
-						if ( current.z != last.z ) {
-
-							data.push( current.z - last.z + 32 );
-							last.z = current.z;
-
-						}
-
-						if ( current.c != last.c ) {
-
-							data.push( current.c - last.c + 32 );
-							last.c = current.c;
-
-						}
-
-					}
-
-				}
-
-				data = encode( data );
-				window.location.hash = "A/" + data;
-				document.getElementById( 'link' ).href = "http://mrdoob.com/projects/voxels/#A/" + data;
-
-			}
-
 			function offsetScene( x, z ) {
 
 				var offset = new THREE.Vector3( x, 0, z ).multiplyScalar( 50 );
@@ -421,7 +309,6 @@ body {
 
 				}
 
-				updateHash();
 				interact();
 				render();
 
@@ -478,9 +365,7 @@ body {
 			}
 
 			function render() {
-
 				renderer.render( scene, camera );
-
 			}
 
 			function save() {
@@ -504,8 +389,6 @@ body {
 
 				}
 
-				window.location.hash = "";
-
 				var i = 0;
 
 				while ( i < scene.objects.length ) {
@@ -521,26 +404,7 @@ body {
 					i ++;
 				}
 
-				updateHash();
 				render();
-
-			}
-
-			// https://gist.github.com/665235
-
-			function decode( string ) {
-
-				var output = [];
-				string.split('').forEach( function ( v ) { output.push( "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".indexOf( v ) ); } );
-				return output;
-
-			}
-
-			function encode( array ) {
-
-				var output = "";
-				array.forEach( function ( v ) { output += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".charAt( v ); } );
-				return output;
 
 			}
 
