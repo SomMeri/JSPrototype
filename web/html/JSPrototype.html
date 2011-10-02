@@ -26,10 +26,9 @@ body {
 			camera, scene, renderer,
 			projector, plane, cube, linesMaterial,
 			color = 0,robotColor = 3,colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
-			ray, brush, objectHovered,
+			ray, brush, robotMesh,
 			mouse3D, isMouseDown = false, onMouseDownPosition,
-			radious = 1600, theta = 45, onMouseDownTheta = 45, phi = 60, onMouseDownPhi = 60,
-			isShiftDown = false;
+			radious = 1600, theta = 45, onMouseDownTheta = 45, phi = 60, onMouseDownPhi = 60;
 
 			init();
 			render();
@@ -127,9 +126,9 @@ body {
 
 			function initRobot(scene) {
 				robot = new Robot( 50 );
-				var robotObject = new THREE.Mesh( robot, new THREE.MeshColorFillMaterial( colors[ robotColor ], 1 ) );
-				robotObject.overdraw = true;
-				placeObject(robotObject, 0, 0, 0);
+				robotMesh = new THREE.Mesh( robot, new THREE.MeshColorFillMaterial( colors[ robotColor ], 1 ) );
+				robotMesh.overdraw = true;
+				placeObject(robotMesh, 0, 0, 0);
 			}
 
 			function initLights(scene) {
@@ -173,26 +172,21 @@ body {
 					case 56: setBrushColor( 7 ); break;
 					case 57: setBrushColor( 8 ); break;
 					case 48: setBrushColor( 9 ); break;
+					case 37: offsetObject( robotMesh, - 1, 0, 0 ); break;
+					case 38: offsetObject( robotMesh, 0, 0, - 1 ); break;
+					case 39: offsetObject( robotMesh, 1, 0, 0 ); break;
+					case 40: offsetObject( robotMesh, 0, 0, 1 ); break;
 
-					case 16: isShiftDown = true; interact(); render(); break;
-
-					case 37: offsetScene( - 1, 0 ); break;
+/* 					case 37: offsetScene( - 1, 0 ); break;
 					case 38: offsetScene( 0, - 1 ); break;
 					case 39: offsetScene( 1, 0 ); break;
 					case 40: offsetScene( 0, 1 ); break;
-
+ */
 				}
 
 			}
 
 			function onDocumentKeyUp( event ) {
-
-				switch( event.keyCode ) {
-
-					case 16: isShiftDown = false; interact(); render(); break;
-
-				}
-
 			}
 
 			function onDocumentMouseDown( event ) {
@@ -255,22 +249,9 @@ body {
 					intersect = intersects[ 0 ].object == brush ? intersects[ 1 ] : intersects[ 0 ];
 
 					if ( intersect ) {
-
-						if ( isShiftDown ) {
-
-							if ( intersect.object != plane ) {
-
-								scene.removeObject( intersect.object );
-
-							}
-
-						} else {
-
-							var position = new THREE.Vector3().add( intersect.point, intersect.object.matrixRotation.transform( intersect.face.normal.clone() ) );
-							var voxel = new THREE.Mesh( cube, new THREE.MeshColorFillMaterial( colors[ color ] ) );
-							placeObject(voxel, Math.floor( position.x / 50 ), Math.floor( position.y / 50 ), Math.floor( position.z / 50 ));
-						}
-
+						var position = new THREE.Vector3().add( intersect.point, intersect.object.matrixRotation.transform( intersect.face.normal.clone() ) );
+						var voxel = new THREE.Mesh( cube, new THREE.MeshColorFillMaterial( colors[ color ] ) );
+						placeObject(voxel, Math.floor( position.x / 50 ), Math.floor( position.y / 50 ), Math.floor( position.z / 50 ));
 					}
 
 				}
@@ -325,16 +306,14 @@ body {
 
 			}
 
+			function offsetObject(object, x, y, z ) {
+				var offset = new THREE.Vector3( x, y, z ).multiplyScalar( 50 );
+				object.position.addSelf( offset );
+				interact();
+				render();
+			}
+
 			function interact() {
-
-				if ( objectHovered ) {
-
-					objectHovered.material[ 0 ].color.a = 1;
-					objectHovered.material[ 0 ].color.updateStyleString();
-					objectHovered = null;
-
-				}
-
 				var position, intersect, intersects = ray.intersectScene( scene );
 
 				if ( intersects.length > 0 ) {
@@ -342,31 +321,13 @@ body {
 					intersect = intersects[ 0 ].object != brush ? intersects[ 0 ] : intersects[ 1 ];
 
 					if ( intersect ) {
+						position = new THREE.Vector3().add( intersect.point, intersect.object.matrixRotation.transform( intersect.face.normal.clone() ) );
 
-						if ( isShiftDown ) {
+						brush.position.x = Math.floor( position.x / 50 ) * 50 + 25;
+						brush.position.y = Math.floor( position.y / 50 ) * 50 + 25;
+						brush.position.z = Math.floor( position.z / 50 ) * 50 + 25;
 
-							if ( intersect.object != plane ) {
-
-								objectHovered = intersect.object;
-								objectHovered.material[ 0 ].color.a = 0.5;
-								objectHovered.material[ 0 ].color.updateStyleString();
-
-								return;
-
-							}
-
-						} else {
-
-							position = new THREE.Vector3().add( intersect.point, intersect.object.matrixRotation.transform( intersect.face.normal.clone() ) );
-
-							brush.position.x = Math.floor( position.x / 50 ) * 50 + 25;
-							brush.position.y = Math.floor( position.y / 50 ) * 50 + 25;
-							brush.position.z = Math.floor( position.z / 50 ) * 50 + 25;
-
-							return;
-
-						}
-
+						return;
 					}
 
 				}
