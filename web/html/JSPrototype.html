@@ -262,8 +262,6 @@ body {
 			}
 
 			function onDocumentMouseWheel( event ) {
-			    alert(1);
-
 				radious -= event.wheelDeltaY;
 
 				camera.position.x = radious * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
@@ -318,6 +316,10 @@ body {
 
 				if ( intersects.length > 0 ) {
 					intersect = intersects[ 0 ].object != brush ? intersects[ 0 ] : intersects[ 1 ];
+					
+					if (intersects[ 0 ] == robotMesh || intersects[ 1 ] == robotMesh) {
+					  alert(1);
+					}
 
 					if ( intersect ) {
 						position = new THREE.Vector3().add( intersect.point, intersect.object.matrixRotation.transform( intersect.face.normal.clone() ) );
