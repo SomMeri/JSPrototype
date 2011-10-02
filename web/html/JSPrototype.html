@@ -17,6 +17,7 @@ body {
 
 	<script type="text/javascript" src="../js/ThreeCanvas.js"></script>
 	<script type="text/javascript" src="../js/Cube.js"></script>
+	<script type="text/javascript" src="../js/Robot.js"></script>
 	<script type="text/javascript" src="../js/Plane.js"></script>
 
 	<script type="text/javascript">
@@ -24,7 +25,7 @@ body {
 			var container, interval,
 			camera, scene, renderer,
 			projector, plane, cube, linesMaterial,
-			color = 0,colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
+			color = 0,robotColor = 3,colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
 			ray, brush, objectHovered,
 			mouse3D, isMouseDown = false, onMouseDownPosition,
 			radious = 1600, theta = 45, onMouseDownTheta = 45, phi = 60, onMouseDownPhi = 60,
@@ -47,6 +48,7 @@ body {
 				initFictionalBottomLines(scene);
 				initPlane(scene);
 				initCube(scene);
+				initRobot(scene);
 				initLights(scene);
 				
 				onMouseDownPosition = new THREE.Vector2();
@@ -115,12 +117,19 @@ body {
 
 			function initCube(scene) {
 				//cursor cube (the light one, see throught it)
-				cube = new Cube( 50, 50, 50 );
+				cube = new Cube( 50 );
 				// last parameter is transparency <-> solidness
 				brush = new THREE.Mesh( cube, new THREE.MeshColorFillMaterial( colors[ color ], 0.5 ) );
 				brush.position.y = 2000;
 				brush.overdraw = true;
 				scene.addObject( brush );
+			}
+
+			function initRobot(scene) {
+				robot = new Robot( 50 );
+				var robotObject = new THREE.Mesh( robot, new THREE.MeshColorFillMaterial( colors[ robotColor ], 1 ) );
+				robotObject.overdraw = true;
+				placeObject(robotObject, 0, 0, 0);
 			}
 
 			function initLights(scene) {
@@ -140,6 +149,14 @@ body {
 				directionalLight.position.z = - 0.75;
 				directionalLight.position.normalize();
 				scene.addLight( directionalLight );
+			}
+			
+			function placeObject(object, x, y, z) {
+				object.position.x = x * 50 + 25;
+				object.position.y = y * 50 + 25;
+				object.position.z = z * 50 + 25;
+				object.overdraw = true;
+				scene.addObject( object );
 			}
 			
 			function onDocumentKeyDown( event ) {
@@ -250,14 +267,8 @@ body {
 						} else {
 
 							var position = new THREE.Vector3().add( intersect.point, intersect.object.matrixRotation.transform( intersect.face.normal.clone() ) );
-
 							var voxel = new THREE.Mesh( cube, new THREE.MeshColorFillMaterial( colors[ color ] ) );
-							voxel.position.x = Math.floor( position.x / 50 ) * 50 + 25;
-							voxel.position.y = Math.floor( position.y / 50 ) * 50 + 25;
-							voxel.position.z = Math.floor( position.z / 50 ) * 50 + 25;
-							voxel.overdraw = true;
-							scene.addObject( voxel );
-
+							placeObject(voxel, Math.floor( position.x / 50 ), Math.floor( position.y / 50 ), Math.floor( position.z / 50 ));
 						}
 
 					}
@@ -270,6 +281,7 @@ body {
 			}
 
 			function onDocumentMouseWheel( event ) {
+			    alert(1);
 
 				radious -= event.wheelDeltaY;
 
