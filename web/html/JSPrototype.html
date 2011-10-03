@@ -28,7 +28,7 @@ body {
 			camera, scene, renderer,
 			projector, plane, cube, linesMaterial,
 			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
-			ray, brush, mouse3D, isMouseDown = false, onMouseDownPosition,
+			ray, brush, isMouseDown = false, onMouseDownPosition,
 			radious = 1600, theta = 45, onMouseDownTheta = 45, phi = 60, onMouseDownPhi = 60;
 			
 			var graphicEngine;
@@ -134,12 +134,7 @@ body {
 					case 39: gameEngine.moveRight(); break;
 					case 40: gameEngine.moveDown(); break;
 					
-/* 					case 37:  offsetObject( robotMesh, - 1, 0, 0 ); break;
-					case 38: offsetObject( robotMesh, 0, 0, - 1 ); break;
-					case 39: offsetObject( robotMesh, 1, 0, 0 ); break;
-					case 40: offsetObject( robotMesh, 0, 0, 1 ); break;
- */				}
-
+				 }
 			}
 
 			function onDocumentKeyUp( event ) {
@@ -167,16 +162,8 @@ body {
 					phi = ( ( event.clientY - onMouseDownPosition.y ) * 0.5 ) + onMouseDownPhi;
 
 					phi = Math.min( 180, Math.max( 0, phi ) );
-
-					camera.position.x = radious * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-					camera.position.y = radious * Math.sin( phi * Math.PI / 360 );
-					camera.position.z = radious * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-					camera.updateMatrix();
-
+					graphicEngine.rotateView(theta, phi);
 				}
-
-				mouse3D = projector.unprojectVector( new THREE.Vector3( ( event.clientX / renderer.domElement.width ) * 2 - 1, - ( event.clientY / renderer.domElement.height ) * 2 + 1, 0.5 ), camera );
-				ray.direction = mouse3D.subSelf( camera.position ).normalize();
 
 				interact();
 				graphicEngine.render();
