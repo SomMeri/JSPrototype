@@ -43,26 +43,27 @@ CubeGeometry.prototype.constructor = CubeGeometry;
 
 /*  Wall itself */
 var Wall = function (unit, color) {
-  this.wallgeometry;
-  this.wallmesh;
+  this.geometry;
+  this.mesh;
   
-  wallgeometry = new CubeGeometry(unit);
-  wallmesh = new THREE.Mesh( wallgeometry, new THREE.MeshColorFillMaterial( color, 1 ) );
+  this.geometry = new CubeGeometry(unit);
+  this.mesh = new THREE.Mesh( this.geometry, new THREE.MeshColorFillMaterial( color, 1 ) );
 };
+Wall.prototype = new Object;
 Wall.prototype.constructor = Wall;
 Wall.prototype.getMesh = function () {
-  return wallmesh;
+  return this.mesh;
 };
 
 /*  Box itself */
 var Box = function (unit, color) {
-  this.boxgeometry;
-  this.boxmesh;
+  this.geometry;
+  this.mesh;
   
-  boxgeometry = new CubeGeometry(unit);
-  boxmesh = new THREE.Mesh( boxgeometry, new THREE.MeshColorFillMaterial( color, 1 ) );
+  this.geometry = new CubeGeometry(unit);
+  this.mesh = new THREE.Mesh( this.geometry, new THREE.MeshColorFillMaterial( color, 1 ) );
 };
 Box.prototype.constructor = Box;
 Box.prototype.getMesh = function () {
-  return boxmesh;
+  return this.mesh;
 };
