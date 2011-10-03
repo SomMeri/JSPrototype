@@ -19,6 +19,8 @@ body {
 	<script type="text/javascript" src="../js/Cube.js"></script>
 	<script type="text/javascript" src="../js/Robot.js"></script>
 	<script type="text/javascript" src="../js/Plane.js"></script>
+	<script type="text/javascript" src="../js/GameEngine.js"></script>
+	<script type="text/javascript" src="../js/GraphicEngine.js"></script>
 
 	<script type="text/javascript">
 
@@ -29,9 +31,12 @@ body {
 			ray, brush, robotMesh,
 			mouse3D, isMouseDown = false, onMouseDownPosition,
 			radious = 1600, theta = 45, onMouseDownTheta = 45, phi = 60, onMouseDownPhi = 60;
+			
+			var graphicEngine;
+			var gameEngine = new GameEngine(graphicEngine);
 
 			init();
-			render();
+			graphicEngine.render();
 
 			function init() {
 
@@ -56,6 +61,8 @@ body {
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
 				container.appendChild(renderer.domElement);
+				graphicEngine = new GraphicEngine(renderer, scene);
+				graphicEngine.render();
 				initEventListeners();
 			}
 
@@ -149,7 +156,7 @@ body {
 				directionalLight.position.normalize();
 				scene.addLight( directionalLight );
 			}
-			
+			//NOW removing
 			function placeObject(object, x, y, z) {
 				object.position.x = x * 50 + 25;
 				object.position.y = y * 50 + 25;
@@ -176,12 +183,6 @@ body {
 					case 38: offsetObject( robotMesh, 0, 0, - 1 ); break;
 					case 39: offsetObject( robotMesh, 1, 0, 0 ); break;
 					case 40: offsetObject( robotMesh, 0, 0, 1 ); break;
-
-/* 					case 37: offsetScene( - 1, 0 ); break;
-					case 38: offsetScene( 0, - 1 ); break;
-					case 39: offsetScene( 1, 0 ); break;
-					case 40: offsetScene( 0, 1 ); break;
- */
 				}
 
 			}
@@ -223,7 +224,7 @@ body {
 				ray.direction = mouse3D.subSelf( camera.position ).normalize();
 
 				interact();
-				render();
+				graphicEngine.render();
 
 			}
 
@@ -257,20 +258,7 @@ body {
 				}
 
 				interact();
-				render();
-
-			}
-
-			function onDocumentMouseWheel( event ) {
-				radious -= event.wheelDeltaY;
-
-				camera.position.x = radious * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-				camera.position.y = radious * Math.sin( phi * Math.PI / 360 );
-				camera.position.z = radious * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-				camera.updateMatrix();
-
-				interact();
-				render();
+				graphicEngine.render();
 
 			}
 
@@ -279,28 +267,7 @@ body {
 				color = value;
 				brush.material[ 0 ].color.setHex( colors[ color ] ^ 0x4C000000 );
 
-				render();
-
-			}
-
-			function offsetScene( x, z ) {
-
-				var offset = new THREE.Vector3( x, 0, z ).multiplyScalar( 50 );
-
-				for ( var i in scene.objects ) {
-
-					object = scene.objects[ i ];
-
-					if ( object instanceof THREE.Mesh && object !== plane && object !== brush ) {
-
-						object.position.addSelf( offset );
-
-					}
-
-				}
-
-				interact();
-				render();
+				graphicEngine.render();
 
 			}
 
@@ -308,7 +275,7 @@ body {
 				var offset = new THREE.Vector3( x, y, z ).multiplyScalar( 50 );
 				object.position.addSelf( offset );
 				interact();
-				render();
+				graphicEngine.render();
 			}
 
 			function interact() {
@@ -337,6 +304,7 @@ body {
 
 			}
 
+			// alrea
 			function render() {
 				renderer.render( scene, camera );
 			}
@@ -345,12 +313,12 @@ body {
 
 				linesMaterial.color.setRGBA( 0, 0, 0, 0 );
 				brush.position.y = 2000;
-				render();
+				graphicEngine.render();
 
 				window.open( renderer.domElement.toDataURL('image/png'), 'mywindow' );
 
 				linesMaterial.color.setRGBA( 0, 0, 0, 0.2 );
-				render();
+				graphicEngine.render();
 
 			}
 
@@ -377,7 +345,7 @@ body {
 					i ++;
 				}
 
-				render();
+				graphicEngine.render();
 
 			}
 
