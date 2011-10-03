@@ -54,8 +54,9 @@ body {
 				ray = graphicEngine.getRay();
 				renderer = graphicEngine.getRenderer();
 
+				plane = graphicEngine.getPlane();
+				
 				initFictionalBottomLines(scene);
-				initPlane(scene);
 				initCube(scene);
 				initRobot(scene);
 				
@@ -107,12 +108,6 @@ body {
 				}
 			}
 			
-			function initPlane(scene) {
-				plane = new THREE.Mesh( new Plane( 1000, 1000 ) );
-				plane.rotation.x = - 90 * Math.PI / 180;
-				scene.addObject( plane );
-			}
-
 			function initCube(scene) {
 				//cursor cube (the light one, see throught it)
 				cube = new Cube( 50 );
