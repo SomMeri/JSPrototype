@@ -25,7 +25,7 @@ body {
 	<script type="text/javascript">
 
 			var container, interval,
-			camera, scene, renderer,
+			scene, renderer,
 			projector, plane, cube, linesMaterial,
 			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
 			ray, brush, isMouseDown = false, onMouseDownPosition,
@@ -45,8 +45,6 @@ body {
 				
 				graphicEngine = new GraphicEngine();
 				gameEngine = new GameEngine(graphicEngine);
-				
-				camera = graphicEngine.getCamera();
 				
 				scene = graphicEngine.getScene();
 				projector = graphicEngine.getProjector();
