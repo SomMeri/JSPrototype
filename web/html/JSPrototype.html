@@ -33,7 +33,7 @@ body {
 			radious = 1600, theta = 45, onMouseDownTheta = 45, phi = 60, onMouseDownPhi = 60;
 			
 			var graphicEngine;
-			var gameEngine = new GameEngine(graphicEngine);
+			var gameEngine;
 
 			init();
 			graphicEngine.render();
@@ -45,6 +45,8 @@ body {
 				appendUpperRow(container);
 				
 				graphicEngine = new GraphicEngine();
+				gameEngine = new GameEngine(graphicEngine);
+				
 				camera = graphicEngine.getCamera();
 				
 				scene = graphicEngine.getScene();
@@ -56,7 +58,6 @@ body {
 				initPlane(scene);
 				initCube(scene);
 				initRobot(scene);
-				initLights(scene);
 				
 				onMouseDownPosition = new THREE.Vector2();
 
@@ -129,25 +130,6 @@ body {
 				graphicEngine.placeObject(robotMesh, 0, 0, 0);
 			}
 
-			function initLights(scene) {
-				var ambientLight = new THREE.AmbientLight( 0x404040 );
-				scene.addLight( ambientLight );
-
-				var directionalLight = new THREE.DirectionalLight( 0xffffff );
-				directionalLight.position.x = 1;
-				directionalLight.position.y = 1;
-				directionalLight.position.z = 0.75;
-				directionalLight.position.normalize();
-				scene.addLight( directionalLight );
-
-				var directionalLight = new THREE.DirectionalLight( 0x808080 );
-				directionalLight.position.x = - 1;
-				directionalLight.position.y = 1;
-				directionalLight.position.z = - 0.75;
-				directionalLight.position.normalize();
-				scene.addLight( directionalLight );
-			}
-			
 			function onDocumentKeyDown( event ) {
 
 				switch( event.keyCode ) {
@@ -285,11 +267,6 @@ body {
 
 				brush.position.y = 2000;
 
-			}
-
-			// alrea
-			function render() {
-				renderer.render( scene, camera );
 			}
 
 			function save() {
