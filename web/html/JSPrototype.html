@@ -28,17 +28,15 @@ body {
 			scene, renderer,
 			plane, cube, linesMaterial,
 			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
-			brush, isMouseDown = false, onMouseDownPosition,
+			isMouseDown = false, onMouseDownPosition,
 			radious = 1600, theta = 45, onMouseDownTheta = 45, phi = 60, onMouseDownPhi = 60;
 			
 			var graphicEngine;
 			var gameEngine;
 
 			init();
-			graphicEngine.render();
 
 			function init() {
-
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 				appendUpperRow(container);
@@ -52,7 +50,6 @@ body {
 				plane = graphicEngine.getPlane();
 				
 				initFictionalBottomLines(scene);
-				initCube(scene);
 				
 				onMouseDownPosition = new THREE.Vector2();
 
@@ -100,36 +97,13 @@ body {
 				}
 			}
 			
-			function initCube(scene) {
-				//cursor cube (the light one, see throught it)
-				cube = new Cube( 50 );
-				// last parameter is transparency <-> solidness
-				brush = new THREE.Mesh( cube, new THREE.MeshColorFillMaterial( colors[ color ], 0.5 ) );
-				brush.position.y = 2000;
-				brush.overdraw = true;
-				scene.addObject( brush );
-			}
-
 			function onDocumentKeyDown( event ) {
 
 				switch( event.keyCode ) {
-
-					case 49: setBrushColor( 0 ); break;
-					case 50: setBrushColor( 1 ); break;
-					case 51: setBrushColor( 2 ); break;
-					case 52: setBrushColor( 3 ); break;
-					case 53: setBrushColor( 4 ); break;
-					case 54: setBrushColor( 5 ); break;
-					case 55: setBrushColor( 6 ); break;
-					case 56: setBrushColor( 7 ); break;
-					case 57: setBrushColor( 8 ); break;
-					case 48: setBrushColor( 9 ); break;
-					
 					case 37: gameEngine.moveLeft(); break;
 					case 38: gameEngine.moveUp(); break;
 					case 39: gameEngine.moveRight(); break;
 					case 40: gameEngine.moveDown(); break;
-					
 				 }
 			}
 
@@ -182,19 +156,9 @@ body {
 				graphicEngine.render();
 			}
 
-			function setBrushColor( value ) {
-
-				color = value;
-				brush.material[ 0 ].color.setHex( colors[ color ] ^ 0x4C000000 );
-
-				graphicEngine.render();
-
-			}
-
 			function save() {
 
 				linesMaterial.color.setRGBA( 0, 0, 0, 0 );
-				brush.position.y = 2000;
 				graphicEngine.render();
 
 				window.open( renderer.domElement.toDataURL('image/png'), 'mywindow' );
@@ -218,7 +182,7 @@ body {
 
 					object = scene.objects[ i ];
 
-					if ( object instanceof THREE.Mesh && object !== plane && object !== brush ) {
+					if ( object instanceof THREE.Mesh && object !== plane ) {
 
 						scene.removeObject( object );
 						continue;

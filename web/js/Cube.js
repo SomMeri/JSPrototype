@@ -1,8 +1,4 @@
-/**
- * @author mr.doob / http://mrdoob.com/
- */
-
-var Cube = function (unit) {
+var CubeGeometry = function (unit) {
 
   THREE.Geometry.call(this);
 
@@ -42,5 +38,31 @@ var Cube = function (unit) {
 
 };
 
-Cube.prototype = new THREE.Geometry();
-Cube.prototype.constructor = Cube;
+CubeGeometry.prototype = new THREE.Geometry();
+CubeGeometry.prototype.constructor = CubeGeometry;
+
+/*  Wall itself */
+var Wall = function (unit, color) {
+  this.wallgeometry;
+  this.wallmesh;
+  
+  wallgeometry = new CubeGeometry(unit);
+  wallmesh = new THREE.Mesh( wallgeometry, new THREE.MeshColorFillMaterial( color, 1 ) );
+};
+Wall.prototype.constructor = Wall;
+Wall.prototype.getMesh = function () {
+  return wallmesh;
+};
+
+/*  Box itself */
+var Box = function (unit, color) {
+  this.boxgeometry;
+  this.boxmesh;
+  
+  boxgeometry = new CubeGeometry(unit);
+  boxmesh = new THREE.Mesh( boxgeometry, new THREE.MeshColorFillMaterial( color, 1 ) );
+};
+Box.prototype.constructor = Box;
+Box.prototype.getMesh = function () {
+  return boxmesh;
+};
