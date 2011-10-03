@@ -14,8 +14,18 @@ body {
 </style>
 </head>
 <body>
-
+	<!--  
 	<script type="text/javascript" src="../js/ThreeCanvas.js"></script>
+	<script type="text/javascript" src="../js/ExtrudeGeometry.js"></script>
+	<script type="text/javascript" src="../js/TextGeometry.js"></script>
+	<script type="text/javascript" src="../js/Curve.js"></script>
+	<script type="text/javascript" src="../js/CurvePath.js"></script>
+	<script type="text/javascript" src="../js/Path.js"></script>
+	<script type="text/javascript" src="../js/TextPath.js"></script>
+	<script type="text/javascript" src="../js/Text.js"></script>-->
+
+	<script type="text/javascript" src="../js/Three.js"></script>
+	
 	<script type="text/javascript" src="../js/Cube.js"></script>
 	<script type="text/javascript" src="../js/Robot.js"></script>
 	<script type="text/javascript" src="../js/Plane.js"></script>
@@ -52,12 +62,12 @@ body {
 				document.body.appendChild( container );
 				appendUpperRow(container);
 				
-				var level = new Level(' ##### ',
-				                      '#     #',
-				                      '#  @$ #',
-				                      '#     #',
-		        		              '#.    #',
-				                      ' ##### ');
+				var level = new Level('  #####  ',
+				                      ' #    .# ',
+				                      ' #  @$ # ',
+				                      ' #     # ',
+		        		              '#       #',
+				                      ' ####### ');
 				graphicEngine = new GraphicEngine();
 				gameEngine = new GameEngine(graphicEngine, level);
 				
@@ -99,7 +109,7 @@ body {
 				geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( - 500, 0, 0 ) ) );
 				geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( 500, 0, 0 ) ) );
 
-				linesMaterial = new THREE.LineColorMaterial( 0x000000, 0.2 );
+				linesMaterial = new THREE.LineBasicMaterial( { color: 0x000000, opacity: 0.2 } );
 
         		// paint bottom lines
 				for ( var i = 0; i <= 20; i ++ ) {

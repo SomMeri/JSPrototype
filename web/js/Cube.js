@@ -34,7 +34,8 @@ var CubeGeometry = function (unit) {
   }
 
   this.computeCentroids();
-  this.computeNormals();
+  this.computeFaceNormals();
+  this.computeVertexNormals();
 
 };
 
@@ -47,7 +48,8 @@ var Wall = function (unit, color) {
   this.mesh;
   
   this.geometry = new CubeGeometry(unit);
-  this.mesh = new THREE.Mesh( this.geometry, new THREE.MeshColorFillMaterial( color, 1 ) );
+  //TODO consider new THREE.CubeGeometry( 50, 50, 50 )
+  this.mesh = new THREE.Mesh( new THREE.CubeGeometry( 50, 50, 50 ), [ new THREE.MeshLambertMaterial( { color: color, opacity: 1, shading: THREE.FlatShading } ), new THREE.MeshFaceMaterial() ] );
 };
 Wall.prototype = new Object;
 Wall.prototype.constructor = Wall;
@@ -61,7 +63,8 @@ var Box = function (unit, color) {
   this.mesh;
   
   this.geometry = new CubeGeometry(unit);
-  this.mesh = new THREE.Mesh( this.geometry, new THREE.MeshColorFillMaterial( color, 1 ) );
+  //TODO consider new THREE.CubeGeometry( 50, 50, 50 )
+  this.mesh = new THREE.Mesh( new THREE.CubeGeometry( 50, 50, 50 ), [ new THREE.MeshLambertMaterial( { color: color, opacity: 1, shading: THREE.FlatShading } ), new THREE.MeshFaceMaterial() ] );
 };
 Box.prototype.constructor = Box;
 Box.prototype.getMesh = function () {

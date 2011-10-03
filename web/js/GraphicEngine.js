@@ -76,6 +76,10 @@ GraphicEngine.prototype.placeCross = function(x, y, z) {
   alert('unfinished method');
 };
 
+GraphicEngine.prototype.placeText = function(mesh, where) {
+  //scene.addObject(mesh);
+};
+
 GraphicEngine.prototype.offsetObject = function (mesh, x, y, z ) {
   var offset = new THREE.Vector3( x, y, z ).multiplyScalar( 50 );
   mesh.position.addSelf( offset );

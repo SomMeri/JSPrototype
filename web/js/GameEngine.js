@@ -113,7 +113,8 @@ Level.prototype.bricklessDestinations = function () {
   var result = 0;
   for(var line = 0; line < this.height; line++) {
     for(var row = 0; row < this.width; row++) {
-      if (this.get(line, row)=='.') {
+      var thing = this.get(line, row);
+      if (thing=='.' || thing=='r') {
         result = result + 1;
       }
     }
@@ -215,7 +216,6 @@ GameEngine.prototype.handlePossibleEndgame = function () {
 
 GameEngine.prototype.resetLevel = function () {
   this.level = this.originalLevel.clone();
-  this.graphicEngine.clear();
   
   var vertical_lines_start = new Array();
   var vertical_lines_end = new Array();
@@ -224,6 +224,7 @@ GameEngine.prototype.resetLevel = function () {
   
   var height = this.level.getHeight();
   var width = this.level.getWidth();
+  this.graphicEngine.clear();
   this.graphicEngine.setGeneralSize(height, width);
   
   //paint objects
@@ -234,29 +235,33 @@ GameEngine.prototype.resetLevel = function () {
         var wall = new Wall( 50, this.wallColor);
         this.level.store(wall, line, row);
         graphicEngine.placeObject(wall.getMesh(), line, 0, row);
-      } else if (item == '$') {
+      } 
+      if (item == '$' || item == 'x') {
         var box = new Box( 50, this.boxColor);
         this.level.store(box, line, row);
         graphicEngine.placeObject(box.getMesh(), line, 0, row);
-      } else if (item == 'x') {
+      } 
+      if (item == 'x') {
         var box = new Box( 50, this.boxColor);
         this.level.store(box, line, row);
         graphicEngine.placeObject(box.getMesh(), line, 0, row);
+      } 
+      if (item == '.' || item == 'x' || item == 'r') {
         //TODO destination; use graphicEngine.placeCross
-      } else if (item == '.') {
-        //TODO destination; use graphicEngine.placeCross
-      } else if (item == '@') { 
+      } 
+      if (item == '@') { 
         this.robot = new Robot( 50, this.robotColor);
         this.level.store(this.robot, line, row);
         graphicEngine.placeObject(this.robot.getMesh(), line, 0, row);
         this.robotLine = line;
         this.robotRow = row;
-      } else {
-        //corresponds to nothing
       }
     }
   }
-  
+
+//  var text = new Text( 'Up', 0x1FDF50);
+//  graphicEngine.placeText(text.getMesh(), 'up');
+
   this.graphicEngine.render();
   //TODO LINES!!!!!!
 };

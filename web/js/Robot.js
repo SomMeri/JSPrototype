@@ -38,7 +38,8 @@ var RobotGeometry = function (unit) {
   }
 
   this.computeCentroids();
-  this.computeNormals();
+  this.computeFaceNormals();
+  this.computeVertexNormals();
 
 };
 RobotGeometry.prototype = new THREE.Geometry();
@@ -50,7 +51,8 @@ var Robot = function (unit, color) {
   this.mesh;
   
   this.geometry = new RobotGeometry(unit);
-  this.mesh = new THREE.Mesh( this.geometry, new THREE.MeshColorFillMaterial( color, 1 ) );
+  //this.mesh = new THREE.Mesh( this.geometry, new THREE.MeshColorFillMaterial( color, 1 ) );
+  this.mesh = new THREE.Mesh( this.geometry, [ new THREE.MeshLambertMaterial( { color: color, opacity: 1, shading: THREE.FlatShading } ), new THREE.MeshFaceMaterial() ] );
   this.mesh.overdraw = true;
 
 };
