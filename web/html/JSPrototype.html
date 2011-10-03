@@ -44,10 +44,13 @@ body {
 				document.body.appendChild( container );
 				appendUpperRow(container);
 				
-				initCamera();
-				scene = new THREE.Scene();
-				projector = new THREE.Projector();
-				ray = new THREE.Ray( camera.position, null );
+				graphicEngine = new GraphicEngine();
+				camera = graphicEngine.getCamera();
+				
+				scene = graphicEngine.getScene();
+				projector = graphicEngine.getProjector();
+				ray = graphicEngine.getRay();
+				renderer = graphicEngine.getRenderer();
 
 				initFictionalBottomLines(scene);
 				initPlane(scene);
@@ -57,11 +60,7 @@ body {
 				
 				onMouseDownPosition = new THREE.Vector2();
 
-				renderer = new THREE.CanvasRenderer();
-				renderer.setSize( window.innerWidth, window.innerHeight );
-
 				container.appendChild(renderer.domElement);
-				graphicEngine = new GraphicEngine(renderer, scene);
 				graphicEngine.render();
 				initEventListeners();
 			}
@@ -85,14 +84,6 @@ body {
 				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
 
 				document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
-			}
-			
-			function initCamera() {
-				camera = new THREE.Camera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.x = radious * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-				camera.position.y = radious * Math.sin( phi * Math.PI / 360 );
-				camera.position.z = radious * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-				camera.target.position.y = 200;
 			}
 			
 			function initFictionalBottomLines(scene) {
@@ -135,7 +126,7 @@ body {
 				robot = new Robot( 50 );
 				robotMesh = new THREE.Mesh( robot, new THREE.MeshColorFillMaterial( colors[ robotColor ], 1 ) );
 				robotMesh.overdraw = true;
-				placeObject(robotMesh, 0, 0, 0);
+				graphicEngine.placeObject(robotMesh, 0, 0, 0);
 			}
 
 			function initLights(scene) {
@@ -155,14 +146,6 @@ body {
 				directionalLight.position.z = - 0.75;
 				directionalLight.position.normalize();
 				scene.addLight( directionalLight );
-			}
-			//NOW removing
-			function placeObject(object, x, y, z) {
-				object.position.x = x * 50 + 25;
-				object.position.y = y * 50 + 25;
-				object.position.z = z * 50 + 25;
-				object.overdraw = true;
-				scene.addObject( object );
 			}
 			
 			function onDocumentKeyDown( event ) {
@@ -252,7 +235,7 @@ body {
 					if ( intersect ) {
 						var position = new THREE.Vector3().add( intersect.point, intersect.object.matrixRotation.transform( intersect.face.normal.clone() ) );
 						var voxel = new THREE.Mesh( cube, new THREE.MeshColorFillMaterial( colors[ color ] ) );
-						placeObject(voxel, Math.floor( position.x / 50 ), Math.floor( position.y / 50 ), Math.floor( position.z / 50 ));
+						graphicEngine.placeObject(voxel, Math.floor( position.x / 50 ), Math.floor( position.y / 50 ), Math.floor( position.z / 50 ));
 					}
 
 				}
