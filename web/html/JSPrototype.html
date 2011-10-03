@@ -27,9 +27,8 @@ body {
 			var container, interval,
 			camera, scene, renderer,
 			projector, plane, cube, linesMaterial,
-			color = 0,robotColor = 3,colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
-			ray, brush, robotMesh,
-			mouse3D, isMouseDown = false, onMouseDownPosition,
+			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
+			ray, brush, mouse3D, isMouseDown = false, onMouseDownPosition,
 			radious = 1600, theta = 45, onMouseDownTheta = 45, phi = 60, onMouseDownPhi = 60;
 			
 			var graphicEngine;
@@ -58,7 +57,6 @@ body {
 				
 				initFictionalBottomLines(scene);
 				initCube(scene);
-				initRobot(scene);
 				
 				onMouseDownPosition = new THREE.Vector2();
 
@@ -84,8 +82,6 @@ body {
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 				document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-
-				document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
 			}
 			
 			function initFictionalBottomLines(scene) {
@@ -118,13 +114,6 @@ body {
 				scene.addObject( brush );
 			}
 
-			function initRobot(scene) {
-				robot = new Robot( 50 );
-				robotMesh = new THREE.Mesh( robot, new THREE.MeshColorFillMaterial( colors[ robotColor ], 1 ) );
-				robotMesh.overdraw = true;
-				graphicEngine.placeObject(robotMesh, 0, 0, 0);
-			}
-
 			function onDocumentKeyDown( event ) {
 
 				switch( event.keyCode ) {
@@ -139,11 +128,17 @@ body {
 					case 56: setBrushColor( 7 ); break;
 					case 57: setBrushColor( 8 ); break;
 					case 48: setBrushColor( 9 ); break;
-					case 37: offsetObject( robotMesh, - 1, 0, 0 ); break;
+					
+					case 37: gameEngine.moveLeft(); break;
+					case 38: gameEngine.moveUp(); break;
+					case 39: gameEngine.moveRight(); break;
+					case 40: gameEngine.moveDown(); break;
+					
+/* 					case 37:  offsetObject( robotMesh, - 1, 0, 0 ); break;
 					case 38: offsetObject( robotMesh, 0, 0, - 1 ); break;
 					case 39: offsetObject( robotMesh, 1, 0, 0 ); break;
 					case 40: offsetObject( robotMesh, 0, 0, 1 ); break;
-				}
+ */				}
 
 			}
 
@@ -231,23 +226,12 @@ body {
 
 			}
 
-			function offsetObject(object, x, y, z ) {
-				var offset = new THREE.Vector3( x, y, z ).multiplyScalar( 50 );
-				object.position.addSelf( offset );
-				interact();
-				graphicEngine.render();
-			}
-
 			function interact() {
 				var position, intersect, intersects = ray.intersectScene( scene );
 
 				if ( intersects.length > 0 ) {
 					intersect = intersects[ 0 ].object != brush ? intersects[ 0 ] : intersects[ 1 ];
 					
-					if (intersects[ 0 ] == robotMesh || intersects[ 1 ] == robotMesh) {
-					  alert(1);
-					}
-
 					if ( intersect ) {
 						position = new THREE.Vector3().add( intersect.point, intersect.object.matrixRotation.transform( intersect.face.normal.clone() ) );
 
