@@ -26,9 +26,9 @@ body {
 
 			var container, interval,
 			scene, renderer,
-			projector, plane, cube, linesMaterial,
+			plane, cube, linesMaterial,
 			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
-			ray, brush, isMouseDown = false, onMouseDownPosition,
+			brush, isMouseDown = false, onMouseDownPosition,
 			radious = 1600, theta = 45, onMouseDownTheta = 45, phi = 60, onMouseDownPhi = 60;
 			
 			var graphicEngine;
@@ -47,8 +47,6 @@ body {
 				gameEngine = new GameEngine(graphicEngine);
 				
 				scene = graphicEngine.getScene();
-				projector = graphicEngine.getProjector();
-				ray = graphicEngine.getRay();
 				renderer = graphicEngine.getRenderer();
 
 				plane = graphicEngine.getPlane();
@@ -163,7 +161,6 @@ body {
 					graphicEngine.rotateView(theta, phi);
 				}
 
-				interact();
 				graphicEngine.render();
 
 			}
@@ -182,24 +179,7 @@ body {
 					return;
 
 				}
-
-				var intersect, intersects = ray.intersectScene( scene );
-
-				if ( intersects.length > 0 ) {
-
-					intersect = intersects[ 0 ].object == brush ? intersects[ 1 ] : intersects[ 0 ];
-
-					if ( intersect ) {
-						var position = new THREE.Vector3().add( intersect.point, intersect.object.matrixRotation.transform( intersect.face.normal.clone() ) );
-						var voxel = new THREE.Mesh( cube, new THREE.MeshColorFillMaterial( colors[ color ] ) );
-						graphicEngine.placeObject(voxel, Math.floor( position.x / 50 ), Math.floor( position.y / 50 ), Math.floor( position.z / 50 ));
-					}
-
-				}
-
-				interact();
 				graphicEngine.render();
-
 			}
 
 			function setBrushColor( value ) {
@@ -208,28 +188,6 @@ body {
 				brush.material[ 0 ].color.setHex( colors[ color ] ^ 0x4C000000 );
 
 				graphicEngine.render();
-
-			}
-
-			function interact() {
-				var position, intersect, intersects = ray.intersectScene( scene );
-
-				if ( intersects.length > 0 ) {
-					intersect = intersects[ 0 ].object != brush ? intersects[ 0 ] : intersects[ 1 ];
-					
-					if ( intersect ) {
-						position = new THREE.Vector3().add( intersect.point, intersect.object.matrixRotation.transform( intersect.face.normal.clone() ) );
-
-						brush.position.x = Math.floor( position.x / 50 ) * 50 + 25;
-						brush.position.y = Math.floor( position.y / 50 ) * 50 + 25;
-						brush.position.z = Math.floor( position.z / 50 ) * 50 + 25;
-
-						return;
-					}
-
-				}
-
-				brush.position.y = 2000;
 
 			}
 
