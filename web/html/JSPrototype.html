@@ -52,8 +52,14 @@ body {
 				document.body.appendChild( container );
 				appendUpperRow(container);
 				
+				var level = new Level(' ##### ',
+				                      '#     #',
+				                      '#  @$ #',
+				                      '#     #',
+		        		              '#.    #',
+				                      ' ##### ');
 				graphicEngine = new GraphicEngine();
-				gameEngine = new GameEngine(graphicEngine);
+				gameEngine = new GameEngine(graphicEngine, level);
 				
 				scene = graphicEngine.getScene();
 				renderer = graphicEngine.getRenderer();
@@ -186,22 +192,7 @@ body {
 					return
 
 				}
-
-				var i = 0;
-
-				while ( i < scene.objects.length ) {
-
-					object = scene.objects[ i ];
-
-					if ( object instanceof THREE.Mesh && object !== plane ) {
-
-						scene.removeObject( object );
-						continue;
-					}
-
-					i ++;
-				}
-
+				graphicEngine.clear();
 				graphicEngine.render();
 
 			}

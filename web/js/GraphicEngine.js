@@ -5,7 +5,10 @@ var GraphicEngine = function ( ) {
   this.ray;
   this.projector;
   this.plane;
-  
+
+  this.height_shift;
+  this.width_shift;
+
   init();
   
   function init() {
@@ -61,28 +64,53 @@ GraphicEngine.prototype.render = function() {
 };
 
 GraphicEngine.prototype.placeObject = function(mesh, x, y, z) {
-  mesh.position.x = x * 50 + 25;
+  mesh.position.x = (x - this.height_shift) * 50 + 25;
   mesh.position.y = y * 50 + 25;
-  mesh.position.z = z * 50 + 25;
+  mesh.position.z = (z - this.width_shift) * 50 + 25;
   mesh.overdraw = true;
   scene.addObject( mesh );
-  this.render();
+};
+
+GraphicEngine.prototype.placeCross = function(x, y, z) {
+  //TODO
+  alert('unfinished method');
 };
 
 GraphicEngine.prototype.offsetObject = function (mesh, x, y, z ) {
   var offset = new THREE.Vector3( x, y, z ).multiplyScalar( 50 );
   mesh.position.addSelf( offset );
-  //TODO ???
-  //interact();
-  this.render();
 };
 
+/**
+ * Only one that calls also render method.
+ * @param theta
+ * @param phi
+ */
 GraphicEngine.prototype.rotateView = function (theta, phi ) {
   camera.position.x = radious * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
   camera.position.y = radious * Math.sin( phi * Math.PI / 360 );
   camera.position.z = radious * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
   camera.updateMatrix();
   this.render();
+};
+
+GraphicEngine.prototype.clear = function() {
+  var i = 0;
+
+  while ( i < scene.objects.length ) {
+    object = scene.objects[ i ];
+    if ( object instanceof THREE.Mesh && object !== plane ) {
+      scene.removeObject( object );
+      continue;
+    }
+
+    i ++;
+  }
+};
+
+GraphicEngine.prototype.setGeneralSize = function (height, width) {
+  this.height_shift = Math.floor(height / 2);
+  this.width_shift = Math.floor(width / 2);
 };
 
 GraphicEngine.prototype.getCamera = function () {
@@ -108,3 +136,4 @@ GraphicEngine.prototype.getRenderer = function () {
 GraphicEngine.prototype.getPlane = function () {
   return plane;
 };
+
