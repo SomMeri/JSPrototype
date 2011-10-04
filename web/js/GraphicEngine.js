@@ -71,7 +71,7 @@ GraphicEngine.prototype.placeObject = function(mesh, x, y, z) {
   scene.addObject(mesh);
 };
 
-GraphicEngine.prototype.placeCross = function(x, y, z) {
+GraphicEngine.prototype.placeDestination = function(x, y, z) {
   //TODO
   alert('unfinished method');
 };

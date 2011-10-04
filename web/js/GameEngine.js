@@ -236,7 +236,8 @@ GameEngine.prototype.resetLevel = function () {
   for(var line = 0; line < height; line++) {
     for(var row = 0; row < width; row++) {
       var item = this.level.get(line, row);
-      if (item == '#' || item == 'r') { //FIXME male r vyzaduje aj destination
+      if (item == '#' || item == 'r') { 
+        //FIXME male r vyzaduje aj placeDestination
         var wall = new Wall( 50, this.wallColor);
         this.level.store(wall, line, row);
         graphicEngine.placeObject(wall.getMesh(), line, 0, row);
@@ -252,7 +253,7 @@ GameEngine.prototype.resetLevel = function () {
         graphicEngine.placeObject(box.getMesh(), line, 0, row);
       } 
       if (item == '.' || item == 'x' || item == 'r') {
-        //TODO destination; use graphicEngine.placeCross
+        //TODO destination; use graphicEngine.placeDestination
       } 
       if (item == '@') { 
         this.robot = new Robot( 50, this.robotColor);
