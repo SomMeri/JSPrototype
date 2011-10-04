@@ -1,4 +1,4 @@
-var GraphicEngine = function ( ) {
+var GraphicEngine = function() {
   this.renderer;
   this.scene;
   this.camera;
@@ -10,49 +10,49 @@ var GraphicEngine = function ( ) {
   this.width_shift;
 
   init();
-  
+
   function init() {
     initCamera();
     scene = new THREE.Scene();
     projector = new THREE.Projector();
-    ray = new THREE.Ray( camera.position, null );
+    ray = new THREE.Ray(camera.position, null);
     renderer = new THREE.CanvasRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
     initLights();
   }
 
   function initCamera() {
-    camera = new THREE.Camera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
-    camera.position.x = radious * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-    camera.position.y = radious * Math.sin( phi * Math.PI / 360 );
-    camera.position.z = radious * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
+    camera = new THREE.Camera(40, window.innerWidth / window.innerHeight, 1, 10000);
+    camera.position.x = radious * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+    camera.position.y = radious * Math.sin(phi * Math.PI / 360);
+    camera.position.z = radious * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
     camera.target.position.y = 200;
   }
 
   function initLights() {
-    var ambientLight = new THREE.AmbientLight( 0x404040 );
-    scene.addLight( ambientLight );
+    var ambientLight = new THREE.AmbientLight(0x404040);
+    scene.addLight(ambientLight);
 
-    var directionalLight = new THREE.DirectionalLight( 0xffffff );
+    var directionalLight = new THREE.DirectionalLight(0xffffff);
     directionalLight.position.x = 1;
     directionalLight.position.y = 1;
     directionalLight.position.z = 0.75;
     directionalLight.position.normalize();
-    scene.addLight( directionalLight );
+    scene.addLight(directionalLight);
 
-    var directionalLight = new THREE.DirectionalLight( 0x808080 );
-    directionalLight.position.x = - 1;
+    var directionalLight = new THREE.DirectionalLight(0x808080);
+    directionalLight.position.x = -1;
     directionalLight.position.y = 1;
-    directionalLight.position.z = - 0.75;
+    directionalLight.position.z = -0.75;
     directionalLight.position.normalize();
-    scene.addLight( directionalLight );
+    scene.addLight(directionalLight);
   }
-  
+
   function initPlane() {
-    plane = new THREE.Mesh( new Plane( 1000, 1000 ) );
-    plane.rotation.x = - 90 * Math.PI / 180;
-    scene.addObject( plane );
+    plane = new THREE.Mesh(new Plane(1000, 1000));
+    plane.rotation.x = -90 * Math.PI / 180;
+    scene.addObject(plane);
   }
 
 };
@@ -60,7 +60,7 @@ var GraphicEngine = function ( ) {
 GraphicEngine.prototype.constructor = GraphicEngine;
 
 GraphicEngine.prototype.render = function() {
-  renderer.render( scene, camera );
+  renderer.render(scene, camera);
 };
 
 GraphicEngine.prototype.placeObject = function(mesh, x, y, z) {
@@ -68,7 +68,7 @@ GraphicEngine.prototype.placeObject = function(mesh, x, y, z) {
   mesh.position.y = y * 50 + 25;
   mesh.position.z = (z - this.width_shift) * 50 + 25;
   mesh.overdraw = true;
-  scene.addObject( mesh );
+  scene.addObject(mesh);
 };
 
 GraphicEngine.prototype.placeCross = function(x, y, z) {
@@ -76,13 +76,56 @@ GraphicEngine.prototype.placeCross = function(x, y, z) {
   alert('unfinished method');
 };
 
-GraphicEngine.prototype.placeText = function(mesh, where) {
-  //scene.addObject(mesh);
+GraphicEngine.prototype.placeOrientationText = function(side) {
+  var text = new OrientationText(side, 0x7F1FDF);
+  var text3D = text.get3DText();
+  var add_shift = 4;
+
+  //  this.height_shift;
+  //  this.width_shift;
+  if (side == 'Up') {
+    text3D.position.x = text.getCenterOffset();
+    text3D.position.y = 0;
+    text3D.position.z = 50 * (-this.height_shift - add_shift);
+
+    text3D.rotation.z = Math.PI * 2;
+    text3D.rotation.x = Math.PI * 1.5;
+    text3D.rotation.y = Math.PI * 2;
+  }
+  if (side == 'Left') {
+    text3D.position.x = 50 * (- this.width_shift - add_shift);
+    text3D.position.y = 0;
+    text3D.position.z = - text.getCenterOffset();
+
+    text3D.rotation.z = Math.PI * (-1.5);
+    text3D.rotation.x = Math.PI * 1.5;
+    text3D.rotation.y = Math.PI * 2;
+  }
+  if (side == 'Down') {
+    text3D.position.x = - text.getCenterOffset();
+    text3D.position.y = 0;
+    text3D.position.z = 50 * (+this.height_shift + add_shift);
+
+    text3D.rotation.z = Math.PI;
+    text3D.rotation.x = Math.PI * 1.5;
+    text3D.rotation.y = Math.PI * 2;
+  }
+  if (side == 'Right') {
+    text3D.position.x = 50 * (+ this.width_shift + add_shift);
+    text3D.position.y = 0;
+    text3D.position.z = + text.getCenterOffset();
+
+    text3D.rotation.z = Math.PI * (1.5);
+    text3D.rotation.x = Math.PI * 1.5;
+    text3D.rotation.y = Math.PI * 2;
+  }
+  
+  scene.addObject(text.mesh);
 };
 
-GraphicEngine.prototype.offsetObject = function (mesh, x, y, z ) {
-  var offset = new THREE.Vector3( x, y, z ).multiplyScalar( 50 );
-  mesh.position.addSelf( offset );
+GraphicEngine.prototype.offsetObject = function(mesh, x, y, z) {
+  var offset = new THREE.Vector3(x, y, z).multiplyScalar(50);
+  mesh.position.addSelf(offset);
 };
 
 /**
@@ -90,10 +133,10 @@ GraphicEngine.prototype.offsetObject = function (mesh, x, y, z ) {
  * @param theta
  * @param phi
  */
-GraphicEngine.prototype.rotateView = function (theta, phi ) {
-  camera.position.x = radious * Math.sin( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
-  camera.position.y = radious * Math.sin( phi * Math.PI / 360 );
-  camera.position.z = radious * Math.cos( theta * Math.PI / 360 ) * Math.cos( phi * Math.PI / 360 );
+GraphicEngine.prototype.rotateView = function(theta, phi) {
+  camera.position.x = radious * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+  camera.position.y = radious * Math.sin(phi * Math.PI / 360);
+  camera.position.z = radious * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
   camera.updateMatrix();
   this.render();
 };
@@ -101,43 +144,42 @@ GraphicEngine.prototype.rotateView = function (theta, phi ) {
 GraphicEngine.prototype.clear = function() {
   var i = 0;
 
-  while ( i < scene.objects.length ) {
-    object = scene.objects[ i ];
-    if ( object instanceof THREE.Mesh && object !== plane ) {
-      scene.removeObject( object );
+  while (i < scene.objects.length) {
+    object = scene.objects[i];
+    if (object instanceof THREE.Mesh && object !== plane) {
+      scene.removeObject(object);
       continue;
     }
 
-    i ++;
+    i++;
   }
 };
 
-GraphicEngine.prototype.setGeneralSize = function (height, width) {
+GraphicEngine.prototype.setGeneralSize = function(height, width) {
   this.height_shift = Math.floor(height / 2);
   this.width_shift = Math.floor(width / 2);
 };
 
-GraphicEngine.prototype.getCamera = function () {
+GraphicEngine.prototype.getCamera = function() {
   return camera;
 };
 
-GraphicEngine.prototype.getRay = function () {
+GraphicEngine.prototype.getRay = function() {
   return ray;
 };
 
-GraphicEngine.prototype.getProjector = function () {
+GraphicEngine.prototype.getProjector = function() {
   return projector;
 };
 
-GraphicEngine.prototype.getScene = function () {
+GraphicEngine.prototype.getScene = function() {
   return scene;
 };
 
-GraphicEngine.prototype.getRenderer = function () {
+GraphicEngine.prototype.getRenderer = function() {
   return renderer;
 };
 
-GraphicEngine.prototype.getPlane = function () {
+GraphicEngine.prototype.getPlane = function() {
   return plane;
 };
-

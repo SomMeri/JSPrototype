@@ -1,6 +1,11 @@
+//TODO kamera musi startovat z krajsieho uhla
 //TODO NICER ENDGAME
 //TODO UP DOWN LEFT TOP ON SIDES
 //TODO SHORTER LINES
+//TODO textury
+//TODO pekny robot
+//TODO pocitadlo krokov
+//TODO undo redo
 
 /**
  * The constructor has variable number of parameters. Each one is a string. They
@@ -259,9 +264,10 @@ GameEngine.prototype.resetLevel = function () {
     }
   }
 
-//  var text = new Text( 'Up', 0x1FDF50);
-//  graphicEngine.placeText(text.getMesh(), 'up');
-
-  this.graphicEngine.render();
+  graphicEngine.placeOrientationText('Up');
+  graphicEngine.placeOrientationText('Left');
+  graphicEngine.placeOrientationText('Down');
+  graphicEngine.placeOrientationText('Right');
+  
   //TODO LINES!!!!!!
 };
