@@ -38,7 +38,7 @@ body {
 	<script type="text/javascript">
 
 			var container, interval,
-			scene, renderer,
+			renderer,
 			plane, cube, linesMaterial,
 			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
 			isMouseDown = false, onMouseDownPosition,
@@ -74,12 +74,9 @@ body {
 				graphicEngine = new GraphicEngine();
 				gameEngine = new GameEngine(graphicEngine, level);
 				
-				scene = graphicEngine.getScene();
 				renderer = graphicEngine.getRenderer();
 
 				plane = graphicEngine.getPlane();
-				
-				initFictionalBottomLines(scene);
 				
 				onMouseDownPosition = new THREE.Vector2();
 
@@ -105,26 +102,6 @@ body {
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 				document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-			}
-			
-			function initFictionalBottomLines(scene) {
-				var geometry = new THREE.Geometry();
-				geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( - 50, 0, 0 ) ) );
-				geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( 50, 0, 0 ) ) );
-
-				linesMaterial = new THREE.LineBasicMaterial( { color: 0x000000, opacity: 0.2 } );
-
-        		// paint bottom lines
-				for ( var i = 0; i <= 20; i ++ ) {
-					var line = new THREE.Line( geometry, linesMaterial );
-					line.position.z = ( i * 50 ) - 500;
-					scene.addObject( line );
-
-					var line = new THREE.Line( geometry, linesMaterial );
-					line.position.x = ( i * 50 ) - 500;
-					line.rotation.y = 90 * Math.PI / 180;
-					scene.addObject( line );
-				}
 			}
 			
 			function onDocumentKeyDown( event ) {

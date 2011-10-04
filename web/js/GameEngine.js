@@ -219,6 +219,16 @@ GameEngine.prototype.handlePossibleEndgame = function () {
   }
 };
 
+GameEngine.prototype.minArray = function (key, value, arr) {
+  if (arr[key]>value || (typeof arr[key] === 'undefined'))
+    arr[key]=value;
+};
+
+GameEngine.prototype.maxArray = function (key, value, arr) {
+  if (arr[key]<value || (typeof arr[key] === 'undefined'))
+    arr[key]=value;
+};
+
 GameEngine.prototype.resetLevel = function () {
   this.level = this.originalLevel.clone();
   
@@ -236,11 +246,14 @@ GameEngine.prototype.resetLevel = function () {
   for(var line = 0; line < height; line++) {
     for(var row = 0; row < width; row++) {
       var item = this.level.get(line, row);
-      if (item == '#' || item == 'r') { 
-        //FIXME male r vyzaduje aj placeDestination
+      if (item == '#') { 
         var wall = new Wall( 50, this.wallColor);
         this.level.store(wall, line, row);
         graphicEngine.placeObject(wall.getMesh(), line, 0, row);
+        this.minArray(line, row, vertical_lines_start);
+        this.maxArray(line, row, vertical_lines_end);
+        this.minArray(row, line, horizontal_lines_start);
+        this.maxArray(row, line, horizontal_lines_end);
       } 
       if (item == '$' || item == 'x') {
         var box = new Box( 50, this.boxColor);
@@ -255,13 +268,29 @@ GameEngine.prototype.resetLevel = function () {
       if (item == '.' || item == 'x' || item == 'r') {
         //TODO destination; use graphicEngine.placeDestination
       } 
-      if (item == '@') { 
+      if (item == '@' || item == 'r') { 
         this.robot = new Robot( 50, this.robotColor);
         this.level.store(this.robot, line, row);
         graphicEngine.placeObject(this.robot.getMesh(), line, 0, row);
         this.robotLine = line;
         this.robotRow = row;
       }
+    }
+  }
+  
+  for(var line = 0; line < height; line++) {
+    var start = vertical_lines_start[line];
+    var end = vertical_lines_end[line];
+    if (!(typeof start === 'undefined') && !(typeof end === 'undefined')) {
+      graphicEngine.placeLine(line, start, line, end);
+    }
+  }
+  
+  for(var row = 0; row < width; row++) {
+    var start = horizontal_lines_start[row];
+    var end = horizontal_lines_end[row];
+    if (!(typeof start === 'undefined') && !(typeof end === 'undefined')) {
+      graphicEngine.placeLine(start, row, end, row);
     }
   }
 

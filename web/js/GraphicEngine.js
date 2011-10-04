@@ -71,6 +71,17 @@ GraphicEngine.prototype.placeObject = function(mesh, x, y, z) {
   scene.addObject(mesh);
 };
 
+GraphicEngine.prototype.placeLine = function(x1, z1, x2, z2) {
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( (x1 - this.height_shift) * 50, 0, (z1 - this.width_shift) * 50) ) );
+  geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( (x2 - this.height_shift) * 50, 0, (z2 - this.width_shift) * 50) ) );
+
+  var linesMaterial = new THREE.LineBasicMaterial( { color: 0x000000, opacity: 0.2 } );
+  var line = new THREE.Line( geometry, linesMaterial );
+  //line.position.z = ( i * 50 ) - 500;
+  scene.addObject( line );
+};
+
 GraphicEngine.prototype.placeDestination = function(x, y, z) {
   //TODO
   alert('unfinished method');
