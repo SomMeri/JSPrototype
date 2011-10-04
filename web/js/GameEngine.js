@@ -1,7 +1,6 @@
 //TODO kamera musi startovat z krajsieho uhla
 //TODO NICER ENDGAME
 //TODO UP DOWN LEFT TOP ON SIDES
-//TODO SHORTER LINES
 //TODO textury
 //TODO pekny robot
 //TODO pocitadlo krokov

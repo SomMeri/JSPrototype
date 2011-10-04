@@ -176,15 +176,11 @@ body {
 			}
 
 			function clear() {
-
 				if ( !confirm( 'Are you sure?' ) ) {
-
-					return
-
+					return ;
 				}
-				graphicEngine.clear();
+				gameEngine.resetLevel();
 				graphicEngine.render();
-
 			}
 
 		</script>
