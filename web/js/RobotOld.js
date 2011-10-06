@@ -3,8 +3,6 @@ var RobotGeometry = function (unit) {
 
   THREE.Geometry.call(this);
 
-  unit = unit /2 ;
-  
   var scope = this,
   width_half = unit / 2,
   height_top = (3 * unit) / 2,
@@ -21,6 +19,8 @@ var RobotGeometry = function (unit) {
   v( -width_half, -height_bottom,  depth_half );
   v( -width_half,  height_top,  depth_half );
 
+//  var texture = THREE.ImageUtils.loadTexture("../textures/disturb.jpg");
+//  var material = new THREE.MeshLambertMaterial( { map: texture, opacity: 1 } );
   var material = new THREE.MeshLambertMaterial( { color: 0x1FDFDF, opacity: 1, shading: THREE.FlatShading } );
   
   //faces
@@ -62,10 +62,10 @@ var Robot = function (unit, color) {
   this.geometry;
   this.mesh;
   
-  
   this.geometry = new RobotGeometry(unit);
   this.mesh = new THREE.Mesh( this.geometry, new THREE.MeshFaceMaterial());
   this.mesh.overdraw = true;
+
 };
 Robot.prototype.constructor = Robot;
 Robot.prototype.getMesh = function () {

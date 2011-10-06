@@ -108,8 +108,6 @@ GraphicEngine.prototype.placeDestination = function(x, y, z) {
   var z2 = (z - this.width_shift) * 50 + 50;
 
   this.placeDestinationSquare(x1, z1, x2, z2, y1, lineMaterial);
-  //this.placeDestinationSquare(x1, z1, x2, z2, y1 + 50, lineMaterial);
-
   this.placeDestinationCross(x1, z1, x2, z2, y1, lineMaterial);
 };
 

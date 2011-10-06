@@ -80,7 +80,7 @@ Initializer.prototype.initialize = function () {
   }
 
   this.createGridLines();
-  graphicEngine.placeOrientationText('Up');
+//  graphicEngine.placeOrientationText('Up');
 //  graphicEngine.placeOrientationText('Left');
 //  graphicEngine.placeOrientationText('Down');
 //  graphicEngine.placeOrientationText('Right');
