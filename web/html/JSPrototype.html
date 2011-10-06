@@ -32,6 +32,7 @@ body {
 	<script type="text/javascript" src="../js/Cube.js"></script>
 	<script type="text/javascript" src="../js/Robot.js"></script>
 	<script type="text/javascript" src="../js/Plane.js"></script>
+	<script type="text/javascript" src="../js/LevelInitializer.js"></script>
 	<script type="text/javascript" src="../js/GameEngine.js"></script>
 	<script type="text/javascript" src="../js/GraphicEngine.js"></script>
 
@@ -65,19 +66,51 @@ body {
 				document.body.appendChild( container );
 				appendUpperRow(container);
 				
-				var level = new Level('  #####  ',
+				var smallestLevel = new Level('  #####  ',
 				                      ' #    .# ',
 				                      ' #  @$ # ',
 				                      ' #     # ',
-		        		              '#       #',
+		        		              '#    $  #',
 				                      ' ####### ');
+				
+				
+				
+				
+				var hugeLevel = new Level(' ############################# ',
+				' #                           # ',
+				' #  $ ### $  #####  $ ### $  # ',
+				' # $ $ ### $  ###  $ ### $ $ # ',
+				' # #  $ ### $  #  $ ### $  # # ',
+				' # ## . . . . .$. . . . . ## # ',
+				' # ###$ $ $ $ $.$ $ $ $ $### # ',
+				'## .. ..... ...$... ..... .. ##',
+				'##  $ $ $ $ $  @  $ $ $ $ $  ##',
+				'## .. ..... ...$... ..... .. ##',
+				' # ###$ $ $ $ $.$ $ $ $ $### # ',
+				' # ## . . . . .$. . . . . ## # ',
+				' # #  $ ### $  #  $ ### $  # # ',
+				' # $ $ ### $  ###  $ ### $ $ # ',
+				' #  $ ### $  #####  $ ### $  # ',
+				' #                           # ',
+				' ############################# ');
+				
+				var realLevel = new Level(
+				    '     #######     ',
+				    '######     ######',
+				    '#  . ..$#$.. .  #',
+				    '#  $ $  .  $ $  #',
+				    '###$####@####$###',
+				    '#  $ $  .  $ $  #',
+				    '#  . ..$#$.. .  #',
+				    '######     ######',
+				    '     #######     ');
+
+				
 				graphicEngine = new GraphicEngine();
-				gameEngine = new GameEngine(graphicEngine, level);
+				gameEngine = new GameEngine(graphicEngine, realLevel);
 				
 				renderer = graphicEngine.getRenderer();
 
-				plane = graphicEngine.getPlane();
-				
 				onMouseDownPosition = new THREE.Vector2();
 
 				container.appendChild(renderer.domElement);

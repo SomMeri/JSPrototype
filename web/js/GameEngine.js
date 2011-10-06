@@ -5,6 +5,8 @@
 //TODO pekny robot
 //TODO pocitadlo krokov
 //TODO undo redo
+//TODO vypinacie textury
+//TODO shading
 
 /**
  * The constructor has variable number of parameters. Each one is a string. They
@@ -69,6 +71,12 @@ Level.prototype.isBrick = function (line, row) {
   return '$' == this.get(line, row) || 'x' == this.get(line, row);
 };
 /**
+ * Returns true if [line, row] contains a wall. 
+ */
+Level.prototype.isWall = function (line, row) {
+  return '#' == this.get(line, row);
+};
+/**
  * Returns true if [line, row] is either a free place or a destination.
  */
 Level.prototype.isEmpty = function (line, row) {
@@ -126,7 +134,6 @@ Level.prototype.bricklessDestinations = function () {
   return result;
 };
 
-/*  Wall itself */
 var GameEngine = function ( _graphicEngine, _level ) {
   //configuration
   this.robotColor = 0x80DF1F;
@@ -218,85 +225,11 @@ GameEngine.prototype.handlePossibleEndgame = function () {
   }
 };
 
-GameEngine.prototype.minArray = function (key, value, arr) {
-  if (arr[key]>value || (typeof arr[key] === 'undefined'))
-    arr[key]=value;
-};
-
-GameEngine.prototype.maxArray = function (key, value, arr) {
-  if (arr[key]<value || (typeof arr[key] === 'undefined'))
-    arr[key]=value;
-};
-
 GameEngine.prototype.resetLevel = function () {
   this.level = this.originalLevel.clone();
-  
-  var vertical_lines_start = new Array();
-  var vertical_lines_end = new Array();
-  var horizontal_lines_start = new Array();
-  var horizontal_lines_end = new Array();
-  
-  var height = this.level.getHeight();
-  var width = this.level.getWidth();
-  this.graphicEngine.clear();
-  this.graphicEngine.setGeneralSize(height, width);
-  
-  //paint objects
-  for(var line = 0; line < height; line++) {
-    for(var row = 0; row < width; row++) {
-      var item = this.level.get(line, row);
-      if (item == '#') { 
-        var wall = new Wall( 50, this.wallColor);
-        this.level.store(wall, line, row);
-        graphicEngine.placeObject(wall.getMesh(), line, 0, row);
-        this.minArray(line, row, vertical_lines_start);
-        this.maxArray(line, row, vertical_lines_end);
-        this.minArray(row, line, horizontal_lines_start);
-        this.maxArray(row, line, horizontal_lines_end);
-      } 
-      if (item == '$' || item == 'x') {
-        var box = new Box( 50, this.boxColor);
-        this.level.store(box, line, row);
-        graphicEngine.placeObject(box.getMesh(), line, 0, row);
-      } 
-      if (item == 'x') {
-        var box = new Box( 50, this.boxColor);
-        this.level.store(box, line, row);
-        graphicEngine.placeObject(box.getMesh(), line, 0, row);
-      } 
-      if (item == '.' || item == 'x' || item == 'r') {
-        //TODO destination; use graphicEngine.placeDestination
-      } 
-      if (item == '@' || item == 'r') { 
-        this.robot = new Robot( 50, this.robotColor);
-        this.level.store(this.robot, line, row);
-        graphicEngine.placeObject(this.robot.getMesh(), line, 0, row);
-        this.robotLine = line;
-        this.robotRow = row;
-      }
-    }
-  }
-  
-  for(var line = 0; line < height; line++) {
-    var start = vertical_lines_start[line];
-    var end = vertical_lines_end[line];
-    if (!(typeof start === 'undefined') && !(typeof end === 'undefined')) {
-      graphicEngine.placeLine(line, start, line, end);
-    }
-  }
-  
-  for(var row = 0; row < width; row++) {
-    var start = horizontal_lines_start[row];
-    var end = horizontal_lines_end[row];
-    if (!(typeof start === 'undefined') && !(typeof end === 'undefined')) {
-      graphicEngine.placeLine(start, row, end, row);
-    }
-  }
-
-  graphicEngine.placeOrientationText('Up');
-  graphicEngine.placeOrientationText('Left');
-  graphicEngine.placeOrientationText('Down');
-  graphicEngine.placeOrientationText('Right');
-  
-  //TODO LINES!!!!!!
+  var initializer = new Initializer(this.graphicEngine, this.level);
+  initializer.initialize();
+  this.robotLine = initializer.robotLine;
+  this.robotRow = initializer.robotRow;
+  this.robot = initializer.robot;
 };

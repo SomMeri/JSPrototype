@@ -19,6 +19,10 @@ var RobotGeometry = function (unit) {
   v( -width_half, -height_bottom,  depth_half );
   v( -width_half,  height_top,  depth_half );
 
+//  var texture = THREE.ImageUtils.loadTexture("../textures/disturb.jpg");
+//  var material = new THREE.MeshLambertMaterial( { map: texture, opacity: 1 } );
+  var material = new THREE.MeshLambertMaterial( { color: 0x1FDFDF, opacity: 1, shading: THREE.FlatShading } );
+  
   //faces
   f4( 0, 1, 2, 3 );
   f4( 4, 7, 6, 5 );
@@ -34,7 +38,15 @@ var RobotGeometry = function (unit) {
 
   function f4(a, b, c, d) {
 
-    scope.faces.push( new THREE.Face4( a, b, c, d ) );
+    //scope.faces.push( new THREE.Face4( a, b, c, d, null, null, ));
+    scope.faces.push( new THREE.Face4( a, b, c, d, null, null, material));
+    scope.faceVertexUvs[ 0 ].push( [
+                                    new THREE.UV( 0, 0 ),
+                                    new THREE.UV( 0, 1 ),
+                                    new THREE.UV( 1, 1 ),
+                                    new THREE.UV( 1, 0 )
+                                   ] );
+
   }
 
   this.computeCentroids();
@@ -51,7 +63,7 @@ var Robot = function (unit, color) {
   this.mesh;
   
   this.geometry = new RobotGeometry(unit);
-  this.mesh = new THREE.Mesh( this.geometry, [ new THREE.MeshLambertMaterial( { color: color, opacity: 1, shading: THREE.FlatShading } ), new THREE.MeshFaceMaterial() ] );
+  this.mesh = new THREE.Mesh( this.geometry, new THREE.MeshFaceMaterial());
   this.mesh.overdraw = true;
 
 };

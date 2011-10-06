@@ -15,9 +15,11 @@ var OrientationText = function(text, color) {
   this.geometry.computeBoundingBox();
   this.centerOffset = -0.5 * (this.geometry.boundingBox.x[1] - this.geometry.boundingBox.x[0]);
   // TODO choose some nice color
-  var textMaterial = new THREE.MeshBasicMaterial({
+  var textMaterial = new THREE.MeshLambertMaterial({
     color : color,
-    wireframe : false
+    wireframe : false,
+    opacity: 1, 
+    shading: THREE.FlatShading
   });
   this.text3D = new THREE.Mesh(this.geometry, textMaterial);
   this.text3D.doubleSided = false;
