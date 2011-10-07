@@ -83,7 +83,8 @@ Level.prototype.isEmpty = function (line, row) {
   return ' ' == this.get(line, row) || '.' == this.get(line, row);
 };
 /**
- * Moves brick to an empty space. Undefined if the place is not empty.
+ * Moves brick to an empty space. Undefined if the place is not empty or from 
+ * does not contain a brick.
  */
 Level.prototype.moveBrick = function (fromLine, fromRow, toLine, toRow) {
   if (' ' == this.get(toLine, toRow)) {
@@ -117,6 +118,10 @@ Level.prototype.moveRobot = function (fromLine, fromRow, toLine, toRow) {
   } else {
     this.set('.', fromLine, fromRow);
   }
+  var fromObj = this.obtain(fromLine, fromRow);
+  var toObj = this.obtain(toLine, toRow);
+  this.store(toObj, fromLine, fromRow);
+  this.store(fromObj, toLine, toRow);
 };
 /**
  * @returns {Number} of brickless destinations

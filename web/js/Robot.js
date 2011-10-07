@@ -3,8 +3,6 @@ var RobotGeometry = function (unit) {
 
   THREE.Geometry.call(this);
 
-  unit = unit /2 ;
-  
   var scope = this,
   width_half = unit / 2,
   height_top = (3 * unit) / 2,
@@ -61,11 +59,12 @@ RobotGeometry.prototype.constructor = RobotGeometry;
 var Robot = function (unit, color) {
   this.geometry;
   this.mesh;
-  
+  this.meshes = new Array();
   
   this.geometry = new RobotGeometry(unit);
   this.mesh = new THREE.Mesh( this.geometry, new THREE.MeshFaceMaterial());
   this.mesh.overdraw = true;
+  
 };
 Robot.prototype.constructor = Robot;
 Robot.prototype.getMesh = function () {
