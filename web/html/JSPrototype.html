@@ -48,10 +48,25 @@ body {
 	<div id="container">
 	<div id="upperrow">
 		<span style="color: #444; background-color: #fff; border-bottom: 1px solid #ddd; padding: 8px 10px; text-transform: uppercase;"> 
-			<strong>drag</strong>: rotate | <a href="javascript:clear();">reset level</a>
+			<strong>drag</strong>: rotate |<select onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">reset level</a>
 		</span>
 	</div>
 	</div>
+	<script type="text/javascript">
+		var levelChooser = document.getElementById("chooseLevel");
+		var library = new LevelsLibrary();
+		
+	  	for(var level = 0; level < library.names.length; level++) {
+	  	  var option = document.createElement("option");
+	      option.text = library.names[level];
+	      option.value = level;
+	      try {
+	        levelChooser.add(option, null); //Standard
+	      }catch(error) {
+	        levelChooser.add(option); // IE only
+	      }
+	  	}
+	</script>
 	
 	<script type="text/javascript">
 
@@ -62,6 +77,7 @@ body {
 			isMouseDown = false, onMouseDownPosition,
 			radious = 1600, theta = 45, onMouseDownTheta = 45, phi = 60, onMouseDownPhi = 60;
 			
+			var library = new LevelsLibrary();
 			var graphicEngine;
 			var gameEngine;
 
@@ -89,46 +105,20 @@ body {
 				                      ' ####### ');
 				
 				
-				var hugeLevel = new Level(' ############################# ',
-				' #                           # ',
-				' #  $ ### $  #####  $ ### $  # ',
-				' # $ $ ### $  ###  $ ### $ $ # ',
-				' # #  $ ### $  #  $ ### $  # # ',
-				' # ## . . . . .$. . . . . ## # ',
-				' # ###$ $ $ $ $.$ $ $ $ $### # ',
-				'## .. ..... ...$... ..... .. ##',
-				'##  $ $ $ $ $  @  $ $ $ $ $  ##',
-				'## .. ..... ...$... ..... .. ##',
-				' # ###$ $ $ $ $.$ $ $ $ $### # ',
-				' # ## . . . . .$. . . . . ## # ',
-				' # #  $ ### $  #  $ ### $  # # ',
-				' # $ $ ### $  ###  $ ### $ $ # ',
-				' #  $ ### $  #####  $ ### $  # ',
-				' #                           # ',
-				' ############################# ');
-				
-				var realLevel = new Level(
-				    '     #######     ',
-				    '######     ######',
-				    '#  . ..$#$.. .  #',
-				    '#  $ $  .  $ $  #',
-				    '###$####@####$###',
-				    '#  $ $  .  $ $  #',
-				    '#  . ..$#$.. .  #',
-				    '######     ######',
-				    '     #######     ');
 
 				
 				graphicEngine = new GraphicEngine();
-				gameEngine = new GameEngine(graphicEngine, hugeLevel);
-				
+				gameEngine = new GameEngine(graphicEngine, smallestLevel);
 				renderer = graphicEngine.getRenderer();
 
 				onMouseDownPosition = new THREE.Vector2();
-
 				container.appendChild(renderer.domElement);
-				graphicEngine.render();
+				
 				initEventListeners();
+
+				var levelChooser = document.getElementById("chooseLevel");
+	  			levelChooser.selectedIndex = 0;
+	  			changeLevel(levelChooser);
 			}
 
 			function initEventListeners() {
@@ -198,18 +188,11 @@ body {
 				}
 				graphicEngine.render();
 			}
-
-			function save() {
-
-				linesMaterial.color.setRGBA( 0, 0, 0, 0 );
-				graphicEngine.render();
-
-				window.open( renderer.domElement.toDataURL('image/png'), 'mywindow' );
-
-				linesMaterial.color.setRGBA( 0, 0, 0, 0.2 );
-				graphicEngine.render();
-
-			}
+	  	
+	  		function changeLevel(levelChooser) {
+	  		  var levelId = levelChooser.options[levelChooser.selectedIndex].value;
+	  		  gameEngine.resetLevel(library.levels[levelId]);
+	  		}
 
 			function clear() {
 				if ( !confirm( 'Are you sure?' ) ) {

@@ -224,7 +224,14 @@ GameEngine.prototype.handlePossibleEndgame = function () {
   }
 };
 
-GameEngine.prototype.resetLevel = function () {
+GameEngine.prototype.resetLevel = function (_level) {
+  if (!(typeof _level === 'undefined')) {
+    this.originalLevel = _level;
+  }
+  if (this.originalLevel === 'undefined') {
+    return ;
+  }
+  
   this.level = this.originalLevel.clone();
   var initializer = new Initializer(this.graphicEngine, this.level);
   initializer.initialize();

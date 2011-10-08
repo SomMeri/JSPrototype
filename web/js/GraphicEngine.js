@@ -4,7 +4,7 @@ var GraphicEngine = function() {
   this.camera;
   this.ray;
   this.projector;
-  this.plane;
+  //this.plane;
 
   this.height_shift;
   this.width_shift;
@@ -49,11 +49,11 @@ var GraphicEngine = function() {
     scene.addLight(directionalLight);
   }
 
-  function initPlane() {
-    plane = new THREE.Mesh(new Plane(1000, 1000));
-    plane.rotation.x = -90 * Math.PI / 180;
-    scene.addObject(plane);
-  }
+//  function initPlane() {
+//    plane = new THREE.Mesh(new Plane(1000, 1000));
+//    plane.rotation.x = -90 * Math.PI / 180;
+//    scene.addObject(plane);
+//  }
 
 };
 
@@ -231,7 +231,7 @@ GraphicEngine.prototype.clear = function() {
 
   while (i < scene.objects.length) {
     object = scene.objects[i];
-    if (object instanceof THREE.Mesh && object !== plane) {
+    if ((object instanceof THREE.Mesh && object !== plane) || object instanceof THREE.Line) {
       scene.removeObject(object);
       continue;
     }
