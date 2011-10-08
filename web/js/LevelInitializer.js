@@ -3,8 +3,8 @@ var Initializer = function ( _graphicEngine, _level ) {
   this.graphicEngine = _graphicEngine;
   this.level = _level;
 
-  this.height = this.level.getHeight();
-  this.width = this.level.getWidth();
+  this.height = this.level.height;
+  this.width = this.level.width;
   
   this.robotLine;
   this.robotRow;

@@ -57,12 +57,6 @@ Level.prototype.store = function (value, line, row) {
 Level.prototype.obtain = function (line, row) {
   return this.storage[line][row];
 };
-Level.prototype.getHeight = function () {
-  return this.height;
-};
-Level.prototype.getWidth = function () {
-  return this.width;
-};
 /**
  * Returns true if [line, row] contains a brick. Both destination \
  * brick and normal one counts.

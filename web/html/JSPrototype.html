@@ -11,6 +11,14 @@ body {
 	margin: 0px;
 	overflow: hidden;
 }
+
+#upperrow {
+	position: absolute;
+	top: 5px;
+	width: 100%;
+	text-align: center;
+
+}
 </style>
 </head>
 <body>
@@ -32,10 +40,19 @@ body {
 	<script type="text/javascript" src="../js/Cube.js"></script>
 	<script type="text/javascript" src="../js/Robot.js"></script>
 	<script type="text/javascript" src="../js/Plane.js"></script>
+	<script type="text/javascript" src="../js/LevelsLibrary.js"></script>
 	<script type="text/javascript" src="../js/LevelInitializer.js"></script>
 	<script type="text/javascript" src="../js/GameEngine.js"></script>
 	<script type="text/javascript" src="../js/GraphicEngine.js"></script>
 
+	<div id="container">
+	<div id="upperrow">
+		<span style="color: #444; background-color: #fff; border-bottom: 1px solid #ddd; padding: 8px 10px; text-transform: uppercase;"> 
+			<strong>drag</strong>: rotate | <a href="javascript:clear();">reset level</a>
+		</span>
+	</div>
+	</div>
+	
 	<script type="text/javascript">
 
 			var container, interval,
@@ -62,9 +79,7 @@ body {
 			    } return newObj;
 			  };
 			  
-			  container = document.createElement( 'div' );
-				document.body.appendChild( container );
-				appendUpperRow(container);
+			  container = document.getElementById("container");
 				
 				var smallestLevel = new Level('  #####  ',
 				                      ' #    .# ',
@@ -105,7 +120,7 @@ body {
 
 				
 				graphicEngine = new GraphicEngine();
-				gameEngine = new GameEngine(graphicEngine, smallestLevel);
+				gameEngine = new GameEngine(graphicEngine, hugeLevel);
 				
 				renderer = graphicEngine.getRenderer();
 
@@ -116,16 +131,6 @@ body {
 				initEventListeners();
 			}
 
-			function appendUpperRow(container) {
-				var info = document.createElement( 'div' );
-				info.style.position = 'absolute';
-				info.style.top = '5px';
-				info.style.width = '100%';
-				info.style.textAlign = 'center';
-				info.innerHTML = '<span style="color: #444; background-color: #fff; border-bottom: 1px solid #ddd; padding: 8px 10px; text-transform: uppercase;"> <strong>drag</strong>: rotate | <a href="javascript:clear();">reset level</a></span>';
-				container.appendChild( info );
-			}
-			
 			function initEventListeners() {
 				document.addEventListener( 'keydown', onDocumentKeyDown, false );
 				document.addEventListener( 'keyup', onDocumentKeyUp, false );
