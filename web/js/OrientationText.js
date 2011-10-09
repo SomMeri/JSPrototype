@@ -1,4 +1,4 @@
-var OrientationText = function(text, color) {
+var OrientationText = function(text, color, unit) {
 
   this.geometry;
   this.mesh;
@@ -26,7 +26,7 @@ var OrientationText = function(text, color) {
   
   this.text3D.position.x = this.centerOffset;
   this.text3D.position.y = 0;
-  this.text3D.position.z = 50 * (- 7);
+  this.text3D.position.z = unit * (- 7);
 
   this.text3D.rotation.z = Math.PI * 2;
   this.text3D.rotation.x = Math.PI * 1.5;

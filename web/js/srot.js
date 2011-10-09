@@ -1,6 +1,6 @@
       function offsetScene( x, z ) {
 
-        var offset = new THREE.Vector3( x, 0, z ).multiplyScalar( 50 );
+        var offset = new THREE.Vector3( x, 0, z ).multiplyScalar( UNIT );
 
         for ( var i in scene.objects ) {
 

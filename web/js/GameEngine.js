@@ -138,7 +138,6 @@ var GameEngine = function ( _graphicEngine, _level ) {
   this.robotColor = 0x80DF1F;
   this.wallColor = 0xDF1F1F;
   this.boxColor=0x7F1FDF;
-  //var colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ];
   
   //initialization
   this.graphicEngine = _graphicEngine;
@@ -204,14 +203,14 @@ GameEngine.prototype.moveDown = function () {
 };
 
 GameEngine.prototype.moveLeft = function () {
-  var lineOffset = -1;
+  var lineOffset = 1;
   var rowOffset = 0;
   this.moveIfYouCan(lineOffset, rowOffset);
   this.handlePossibleEndgame();
 };
 
 GameEngine.prototype.moveRight = function () {
-  var lineOffset = 1;
+  var lineOffset = -1;
   var rowOffset = 0;
   this.moveIfYouCan(lineOffset, rowOffset);
   this.handlePossibleEndgame();

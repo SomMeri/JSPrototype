@@ -50,11 +50,6 @@ Initializer.prototype.initialize = function () {
     for(var row = 0; row < this.width; row++) {
       var item = this.level.get(line, row);
       if (item == '#') {
-//        var wall = new THREE.PlaneGeometry(50, 50);
-//        var mesh = new THREE.Mesh( wall, wallMaterial);
-//        mesh.rotation.x = - Math.PI / 2;
-//        graphicEngine.placeBoardPlane(mesh, line, 0, row);
-        
         //TODO refactor
         var wall = this.createWall(line, row, wallMaterial);
         this.level.store(wall, line, row);
@@ -62,7 +57,7 @@ Initializer.prototype.initialize = function () {
         this.totalWalls = this.totalWalls +1;
       } 
       if (item == '$' || item == 'x') {
-        var box = new Box( 50, this.boxColor, materials);
+        var box = new Box( graphicEngine.UNIT_SIZE, this.boxColor, materials);
         this.level.store(box, line, row);
         graphicEngine.placeObject(box.getMesh(), line, 0, row);
       } 
@@ -70,7 +65,7 @@ Initializer.prototype.initialize = function () {
         graphicEngine.placeDestination(line, 0, row);
       } 
       if (item == '@' || item == 'r') { 
-        this.robot = new Robot( 50, this.robotColor);
+        this.robot = new Robot( graphicEngine.UNIT_SIZE, this.robotColor);
         this.level.store(this.robot, line, row);
         graphicEngine.placeObject(this.robot.getMesh(), line, 0, row);
         this.robotLine = line;
@@ -149,7 +144,7 @@ Initializer.prototype.createWall = function (line, row, wallMaterial) {
     this.missedWalls = this.missedWalls -1;
   }
 
-  return new Wall( 50, this.wallColor, wallMaterial, hasUp, hasDown, hasLeft, hasRight);
+  return new Wall( graphicEngine.UNIT_SIZE, this.wallColor, wallMaterial, hasUp, hasDown, hasLeft, hasRight);
 };
 
 Initializer.prototype.minArray = function (key, value, arr) {

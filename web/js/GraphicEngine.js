@@ -1,10 +1,12 @@
 var GraphicEngine = function() {
+  this.UNIT_SIZE = 50;
+  this.HALF = 25;
+  
   this.renderer;
   this.scene;
   this.camera;
   this.ray;
   this.projector;
-  //this.plane;
 
   this.height_shift;
   this.width_shift;
@@ -64,32 +66,31 @@ GraphicEngine.prototype.render = function() {
 };
 
 GraphicEngine.prototype.placeObject = function(mesh, x, y, z) {
-  mesh.position.x = (x - this.height_shift) * 50 + 25;
-  mesh.position.y = y * 50 + 25;
-  mesh.position.z = (z - this.width_shift) * 50 + 25;
+  mesh.position.x = (x - this.height_shift) * this.UNIT_SIZE + this.HALF;
+  mesh.position.y = y * this.UNIT_SIZE + this.HALF;
+  mesh.position.z = (z - this.width_shift) * this.UNIT_SIZE + this.HALF;
   mesh.overdraw = true;
   scene.addObject(mesh);
 };
 
 GraphicEngine.prototype.placeBoardPlane = function(mesh, x, y, z) {
-  mesh.position.x = (x - this.height_shift) * 50 + 25;
-  mesh.position.y = y * 50;
-  mesh.position.z = (z - this.width_shift) * 50 + 25;
+  mesh.position.x = (x - this.height_shift) * this.UNIT_SIZE + this.HALF;
+  mesh.position.y = y * this.UNIT_SIZE;
+  mesh.position.z = (z - this.width_shift) * this.UNIT_SIZE + this.HALF;
   mesh.overdraw = true;
   scene.addObject(mesh);
 };
 
 GraphicEngine.prototype.placeLine = function(x1, z1, x2, z2) {
   var geometry = new THREE.Geometry();
-  geometry.vertices.push(new THREE.Vertex(new THREE.Vector3((x1 - this.height_shift) * 50, 0, (z1 - this.width_shift) * 50)));
-  geometry.vertices.push(new THREE.Vertex(new THREE.Vector3((x2 - this.height_shift) * 50, 0, (z2 - this.width_shift) * 50)));
+  geometry.vertices.push(new THREE.Vertex(new THREE.Vector3((x1 - this.height_shift) * this.UNIT_SIZE, 0, (z1 - this.width_shift) * this.UNIT_SIZE)));
+  geometry.vertices.push(new THREE.Vertex(new THREE.Vector3((x2 - this.height_shift) * this.UNIT_SIZE, 0, (z2 - this.width_shift) * this.UNIT_SIZE)));
 
   var linesMaterial = new THREE.LineBasicMaterial({
     color : 0x000000,
     opacity : 0.2
   });
   var line = new THREE.Line(geometry, linesMaterial);
-  // line.position.z = ( i * 50 ) - 500;
   scene.addObject(line);
 };
 
@@ -99,13 +100,13 @@ GraphicEngine.prototype.placeDestination = function(x, y, z) {
     opacity : 1
   });
 
-  var y1 = y * 50;
+  var y1 = y * this.UNIT_SIZE;
 
-  var x1 = (x - this.height_shift) * 50;
-  var z1 = (z - this.width_shift) * 50;
+  var x1 = (x - this.height_shift) * this.UNIT_SIZE;
+  var z1 = (z - this.width_shift) * this.UNIT_SIZE;
 
-  var x2 = (x - this.height_shift) * 50 + 50;
-  var z2 = (z - this.width_shift) * 50 + 50;
+  var x2 = (x - this.height_shift + 1) * this.UNIT_SIZE;
+  var z2 = (z - this.width_shift + 1) * this.UNIT_SIZE;
 
   this.placeDestinationSquare(x1, z1, x2, z2, y1, lineMaterial);
   this.placeDestinationCross(x1, z1, x2, z2, y1, lineMaterial);
@@ -120,8 +121,8 @@ GraphicEngine.prototype.placeDestinationCross = function(x1, z1, x2, z2, y, line
   scene.addObject(line);
 
   var geometry = new THREE.Geometry();
-  geometry.vertices.push(new THREE.Vertex(new THREE.Vector3(x1, y, z1 + 50)));
-  geometry.vertices.push(new THREE.Vertex(new THREE.Vector3(x2, y, z2 - 50)));
+  geometry.vertices.push(new THREE.Vertex(new THREE.Vector3(x1, y, z1 + this.UNIT_SIZE)));
+  geometry.vertices.push(new THREE.Vertex(new THREE.Vector3(x2, y, z2 - this.UNIT_SIZE)));
   var line = new THREE.Line(geometry, linesMaterial);
   scene.addObject(line);
 };
@@ -155,7 +156,7 @@ GraphicEngine.prototype.placeDestinationSquare = function(x1, z1, x2, z2, y, lin
 };
 
 GraphicEngine.prototype.placeOrientationText = function(side) {
-  var text = new OrientationText(side, 0x7F1FDF);
+  var text = new OrientationText(side, 0x7F1FDF, this.UNIT_SIZE);
   var text3D = text.get3DText();
   var add_shift = 4;
 
@@ -164,14 +165,14 @@ GraphicEngine.prototype.placeOrientationText = function(side) {
   if (side == 'Up') {
     text3D.position.x = text.getCenterOffset();
     text3D.position.y = 0;
-    text3D.position.z = 50 * (-this.width_shift - add_shift);
+    text3D.position.z = this.UNIT_SIZE * (-this.width_shift - add_shift);
 
     text3D.rotation.z = Math.PI * 2;
     text3D.rotation.x = Math.PI * 1.5;
     text3D.rotation.y = Math.PI * 2;
   }
   if (side == 'Left') {
-    text3D.position.x = 50 * (-this.height_shift - add_shift);
+    text3D.position.x = this.UNIT_SIZE * (-this.height_shift - add_shift);
     text3D.position.y = 0;
     text3D.position.z = -text.getCenterOffset();
 
@@ -182,14 +183,14 @@ GraphicEngine.prototype.placeOrientationText = function(side) {
   if (side == 'Down') {
     text3D.position.x = -text.getCenterOffset();
     text3D.position.y = 0;
-    text3D.position.z = 50 * (+this.width_shift + add_shift);
+    text3D.position.z = this.UNIT_SIZE * (+this.width_shift + add_shift);
 
     text3D.rotation.z = Math.PI;
     text3D.rotation.x = Math.PI * 1.5;
     text3D.rotation.y = Math.PI * 2;
   }
   if (side == 'Right') {
-    text3D.position.x = 50 * (+this.height_shift + add_shift);
+    text3D.position.x = this.UNIT_SIZE * (+this.height_shift + add_shift);
     text3D.position.y = 0;
     text3D.position.z = +text.getCenterOffset();
 
@@ -202,7 +203,7 @@ GraphicEngine.prototype.placeOrientationText = function(side) {
 };
 
 GraphicEngine.prototype.offsetObject = function(mesh, x, y, z) {
-  var offset = new THREE.Vector3(x, y, z).multiplyScalar(50);
+  var offset = new THREE.Vector3(x, y, z).multiplyScalar(this.UNIT_SIZE);
   mesh.position.addSelf(offset);
 };
 
