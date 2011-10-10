@@ -16,9 +16,24 @@ body {
 	position: absolute;
 	top: 5px;
 	width: 100%;
-	text-align: center;
-
 }
+
+.gameoptions {
+	color: #444; 
+	background-color: #fff; 
+	border-bottom: 1px solid #ddd; 
+	padding: 8px 10px; 
+	text-align: left;
+}
+
+.leveloptions {
+	color: #444; 
+	background-color: #fff; 
+	border-bottom: 1px solid #ddd; 
+	padding: 8px 10px; 
+	text-align: right;
+}
+
 </style>
 </head>
 <body>
@@ -47,8 +62,12 @@ body {
 
 	<div id="container">
 	<div id="upperrow">
-		<span style="color: #444; background-color: #fff; border-bottom: 1px solid #ddd; padding: 8px 10px; text-transform: uppercase;"> 
-			<strong>drag</strong>: rotate |<select onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">reset level</a>
+		<span class="gameoptions" > 
+			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a>
+		</span>
+		<span> &nbsp; </span>
+		<span class="leveloptions" > 
+			<strong>STEPS</strong>: <span id="stepsnum">0</span> | <a href="javascript:undo();">UNDO</a>
 		</span>
 	</div>
 	</div>
@@ -108,7 +127,7 @@ body {
 
 				
 				graphicEngine = new GraphicEngine();
-				gameEngine = new GameEngine(graphicEngine, smallestLevel);
+				gameEngine = new GameEngine(graphicEngine, smallestLevel, refreshStats);
 				renderer = graphicEngine.getRenderer();
 
 				onMouseDownPosition = new THREE.Vector2();
@@ -119,6 +138,11 @@ body {
 				var levelChooser = document.getElementById("chooseLevel");
 	  			levelChooser.selectedIndex = 0;
 	  			changeLevel(levelChooser);
+			}
+
+			function refreshStats() {
+			  var html = document.getElementById("stepsnum");
+			  html.innerHTML = gameEngine.stepsSoFar();
 			}
 
 			function initEventListeners() {
@@ -199,6 +223,11 @@ body {
 					return ;
 				}
 				gameEngine.resetLevel();
+				graphicEngine.render();
+			}
+
+			function undo() {
+				gameEngine.undoMove();
 				graphicEngine.render();
 			}
 

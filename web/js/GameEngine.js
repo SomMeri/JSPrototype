@@ -133,7 +133,43 @@ Level.prototype.bricklessDestinations = function () {
   return result;
 };
 
-var GameEngine = function ( _graphicEngine, _level ) {
+var Move = function (_lineOffset, _rowOffset, _movedBrick) {
+  this.lineOffset = _lineOffset;
+  this.rowOffset = _rowOffset;
+  this.movedBrick = _movedBrick;
+};
+Move.prototype.constructor = Move;
+
+Move.prototype.invert = function () {
+  return new Move(-this.lineOffset, -this.rowOffset, this.movedBrick);
+};
+
+var MovesHistory = function (  ) {
+  this.moves = new Array();
+};
+MovesHistory.prototype.constructor = MovesHistory;
+
+MovesHistory.prototype.push = function (lineOffset, rowOffset, movedBrick) {
+  var move = new Move(lineOffset, rowOffset, movedBrick);
+  this.moves.push(move);
+};
+
+MovesHistory.prototype.stepsNumber = function () {
+  return this.moves.length;
+};
+
+MovesHistory.prototype.pop = function () {
+  if (this.moves.length > 0)
+    return this.moves.pop();
+  
+  return new Move(0, 0);
+};
+
+MovesHistory.prototype.hasHistory = function () {
+  return this.moves.length > 0;
+};
+
+var GameEngine = function ( _graphicEngine, _level, _updateStatsCallback ) {
   //configuration
   this.robotColor = 0x80DF1F;
   this.wallColor = 0xDF1F1F;
@@ -143,9 +179,12 @@ var GameEngine = function ( _graphicEngine, _level ) {
   this.graphicEngine = _graphicEngine;
   this.originalLevel = _level;
   this.level = this.originalLevel.clone();
+  this.updateStatsCallback = _updateStatsCallback;
   this.robot;
   this.robotLine;
   this.robotRow;
+  
+  this.movesHistory;
 
   this.resetLevel();
 };
@@ -169,23 +208,55 @@ GameEngine.prototype.canMove = function (lineOffset, rowOffset) {
   return false;
 };
 
+GameEngine.prototype.stepsSoFar = function () {
+  return this.movesHistory.stepsNumber();
+};
+
+GameEngine.prototype.moveBrick = function (line, row, lineOffset, rowOffset) {
+  //move brick
+  var brick = this.level.obtain(line, row);
+  this.level.moveBrick(line, row, line + lineOffset, row + rowOffset);
+  this.graphicEngine.offsetObject(brick.getMesh(), lineOffset, 0, rowOffset);
+};
+
+GameEngine.prototype.moveRobot = function (lineOffset, rowOffset) {
+  var nextLine = this.robotLine + lineOffset, nextRow = this.robotRow + rowOffset;
+  
+  this.level.moveRobot(this.robotLine, this.robotRow, nextLine, nextRow);
+  this.graphicEngine.offsetObject(this.robot.getMesh(), lineOffset, 0, rowOffset);
+  this.robotLine = nextLine;
+  this.robotRow = nextRow;
+};
+
 GameEngine.prototype.moveIfYouCan = function (lineOffset, rowOffset) {
   var nextLine = this.robotLine + lineOffset, nextRow = this.robotRow + rowOffset;
   if (this.canMove(lineOffset, rowOffset)) {
+    var movedBrick = false;
     if (this.level.isBrick(nextLine, nextRow)) {
-      //move brick
-      var brick = this.level.obtain(nextLine, nextRow);
-      this.level.moveBrick(nextLine, nextRow, nextLine + lineOffset, nextRow + rowOffset);
-      this.graphicEngine.offsetObject(brick.getMesh(), lineOffset, 0, rowOffset);
+      this.moveBrick(nextLine, nextRow, lineOffset, rowOffset);
+      movedBrick = true;
     }
     //move robot
-    this.level.moveRobot(this.robotLine, this.robotRow, nextLine, nextRow);
-    this.graphicEngine.offsetObject(this.robot.getMesh(), lineOffset, 0, rowOffset);
-    this.robotLine = nextLine;
-    this.robotRow = nextRow;
+    this.moveRobot(lineOffset, rowOffset);
+    
     this.graphicEngine.render();
+    this.movesHistory.push(lineOffset, rowOffset, movedBrick);
   }
- 
+  this.updateStatsCallback();
+};
+
+GameEngine.prototype.undoMove= function () {
+  if (this.movesHistory.hasHistory()) {
+    var move = this.movesHistory.pop().invert();
+    var brickLine = this.robotLine - move.lineOffset, brickRow = this.robotRow - move.rowOffset;
+    this.moveRobot(move.lineOffset, move.rowOffset);
+    
+    if (move.movedBrick) {
+      this.moveBrick(brickLine, brickRow, move.lineOffset, move.rowOffset);
+    }
+    
+    this.updateStatsCallback();
+  }
 };
 
 GameEngine.prototype.moveUp = function () {
@@ -203,14 +274,14 @@ GameEngine.prototype.moveDown = function () {
 };
 
 GameEngine.prototype.moveLeft = function () {
-  var lineOffset = 1;
+  var lineOffset = -1;
   var rowOffset = 0;
   this.moveIfYouCan(lineOffset, rowOffset);
   this.handlePossibleEndgame();
 };
 
 GameEngine.prototype.moveRight = function () {
-  var lineOffset = -1;
+  var lineOffset = 1;
   var rowOffset = 0;
   this.moveIfYouCan(lineOffset, rowOffset);
   this.handlePossibleEndgame();
@@ -237,4 +308,6 @@ GameEngine.prototype.resetLevel = function (_level) {
   this.robotLine = initializer.robotLine;
   this.robotRow = initializer.robotRow;
   this.robot = initializer.robot;
+  
+  this.movesHistory = new MovesHistory();
 };
