@@ -141,8 +141,10 @@ body {
 			}
 
 			function refreshStats() {
-			  var html = document.getElementById("stepsnum");
-			  html.innerHTML = gameEngine.stepsSoFar();
+			  if (!(typeof gameEngine === 'undefined')) {
+				  var html = document.getElementById("stepsnum");
+				  html.innerHTML = gameEngine.stepsSoFar();
+			  }
 			}
 
 			function initEventListeners() {
