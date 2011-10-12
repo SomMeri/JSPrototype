@@ -10,7 +10,6 @@ LevelObjectText.prototype.assertIsRobot = function(level, line, row) {
 
 LevelObjectText.prototype.assertIsWall = function(level, line, row) {
   jstestdriver.console.log('JsTestDriver', line + ': ' + row + ': |' + level.get(line, row) + '|');
-  assertEquals('Should be a wall.', '#', level.get(line, row));
   assertTrue('Should be a wall.', level.isWall(line, row));
   assertFalse('Should be a wall.', level.isBrick(line, row));
   assertFalse('Should be a wall.', level.isEmpty(line, row));
@@ -43,6 +42,7 @@ LevelObjectText.prototype.assertIsDestination = function(level, line, row) {
 };
 
 LevelObjectText.prototype.testEmptyDestinations = function() {
+  jstestdriver.console.log('JsTestDriver', 'testEmptyDestinations');
   var ed = new Level('  #####  ',
                      ' #    .# ',
                      ' #  @$ # ',
@@ -51,15 +51,17 @@ LevelObjectText.prototype.testEmptyDestinations = function() {
                      ' ####### ');
   
   //test initialization
-  assertEquals(6, ed.getHeight());
-  assertEquals(9, ed.getWidth());
+  jstestdriver.console.log('* initialization');
+  assertEquals(6, ed.height);
+  assertEquals(9, ed.width);
   assertEquals(2, ed.bricklessDestinations());
 
   this.assertIsWall(ed, 1, 1);
   this.assertIsBrick(ed, 2, 5);
   this.assertIsEmpty(ed, 2, 6);
   
-  //test move bricks on an empty place
+  //move bricks on an empty place
+  jstestdriver.console.log('JsTestDriver', '* move bricks on an empty place');
   ed.store('brick', 2, 5);
   ed.store('empty', 1, 3);
   ed.moveBrick(2, 5, 1, 3);

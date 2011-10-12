@@ -1,4 +1,4 @@
-var GraphicEngine = function() {
+var GraphicEngine = function(_canvasWidth, _canvasheight) {
   this.UNIT_SIZE = 50;
   this.HALF = 25;
   
@@ -11,15 +11,24 @@ var GraphicEngine = function() {
   this.height_shift;
   this.width_shift;
 
-  init();
+  init(_canvasWidth, _canvasheight);
 
-  function init() {
+  function init(_canvasWidth, _canvasheight) {
     initCamera();
     scene = new THREE.Scene();
     projector = new THREE.Projector();
     ray = new THREE.Ray(camera.position, null);
     renderer = new THREE.CanvasRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    
+    if (_canvasWidth === undefined) {
+      _canvasWidth = window.innerWidth;
+    }
+
+    if (_canvasheight === undefined) {
+      _canvasheight = window.innerHeight;
+    }
+
+    renderer.setSize(_canvasWidth, _canvasheight);
 
     initLights();
   }
@@ -50,12 +59,6 @@ var GraphicEngine = function() {
     directionalLight.position.normalize();
     scene.addLight(directionalLight);
   }
-
-//  function initPlane() {
-//    plane = new THREE.Mesh(new Plane(1000, 1000));
-//    plane.rotation.x = -90 * Math.PI / 180;
-//    scene.addObject(plane);
-//  }
 
 };
 

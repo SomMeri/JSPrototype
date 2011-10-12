@@ -8,6 +8,16 @@
 //TODO vypinacie textury
 //TODO shading
 
+function set ()
+  {
+    var result = {};
+
+    for (var i = 0; i < arguments.length; i++)
+      result[arguments[i]] = true;
+
+    return result;
+};
+  
 /**
  * The constructor has variable number of parameters. Each one is a string. They
  * all have to have the same size. The number of arguments must be non-zero and 
@@ -36,9 +46,9 @@ var Level = function () {
     this.storage[line] = new Array();
     for(var row = 0; row < this.width; row++) {
       var thing = arguments[line].charAt(row);
-      if (thing != '#' && thing != '$' && thing != '.' && thing != 'x' && thing != '@' && thing != 'r') {
-        thing = ' ';
-      }
+//      if (thing != '#' && thing != '$' && thing != '.' && thing != 'x' && thing != '@' && thing != 'r') {
+//        thing = ' ';
+//      }
       this.board[line][row] = thing; 
       this.storage[line][row] = null; 
     }
@@ -62,13 +72,32 @@ Level.prototype.obtain = function (line, row) {
  * brick and normal one counts.
  */
 Level.prototype.isBrick = function (line, row) {
-  return '$' == this.get(line, row) || 'x' == this.get(line, row);
+  var item = this.get(line, row);
+  return '$' == item || 'x' == item;
 };
 /**
  * Returns true if [line, row] contains a wall. 
  */
 Level.prototype.isWall = function (line, row) {
-  return '#' == this.get(line, row);
+  var item = this.get(line, row);
+  if (item === undefined)
+    return false;
+  
+  return item in set('#', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0');  
+};
+/**
+ * Returns true if [line, row] contains a robot. 
+ */
+Level.prototype.isRobot = function (line, row) {
+  var item = this.get(line, row);
+  return item == '@' || item == 'r';
+};
+/**
+ * Returns true if [line, row] contains a destination. 
+ */
+Level.prototype.isDestination = function (line, row) {
+  var item = this.get(line, row);
+  return item == '.' || item == 'x' || item == 'r';
 };
 /**
  * Returns true if [line, row] is either a free place or a destination.
