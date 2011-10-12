@@ -20,8 +20,11 @@ Initializer.prototype.initialize = function () {
   //TODO toto cele upratat, nech tie graf veci robi graphic engine
   
   //var wallTexture = THREE.ImageUtils.loadTexture("../textures/test.PNG");
-  var wallTexture = THREE.ImageUtils.loadTexture("../textures/wallPower2.PNG");
-  var wallMaterial = new THREE.MeshBasicMaterial( { map: wallTexture, opacity: 1, shading: THREE.FlatShading } );
+  //var wallTexture = THREE.ImageUtils.loadTexture("../textures/wallPower2.PNG");
+  
+  var wallImage = new Image();
+  wallImage.src = '../textures/wallPower2.PNG';
+  
   //var wallMaterial = new THREE.MeshLambertMaterial( { color: 0x1FDFDF, opacity: 1, shading: THREE.FlatShading } );
   //var wallMaterial = new THREE.MeshNormalMaterial();
   
@@ -49,7 +52,7 @@ Initializer.prototype.initialize = function () {
   for(var line = 0; line < this.height; line++) {
     for(var row = 0; row < this.width; row++) {
       if (this.level.isWall(line, row)) {
-        this.createWallAdvanced(line, row, wallMaterial);
+        this.createWallAdvanced(line, row, wallImage);
       } 
       if (this.level.isBrick(line, row)) {
         var box = new Box( graphicEngine.UNIT_SIZE, this.boxColor, materials);
@@ -84,7 +87,7 @@ Initializer.prototype.createWallSimple = function (line, row, wallMaterial) {
   this.totalWalls = this.totalWalls +1;
 };
 
-Initializer.prototype.createWallAdvanced = function (line, row, wallMaterial) {
+Initializer.prototype.createWallAdvanced = function (line, row, wallImage) {
   var item = this.level.get(line, row);
   if (item==='#')
     return ;
@@ -96,7 +99,7 @@ Initializer.prototype.createWallAdvanced = function (line, row, wallMaterial) {
 
   //create object
   markWallAsUsed(this.level, top, left, bottom, right);
-  var wall = this.createPhysicalWallAdvanced(top, left, bottom, right, wallMaterial);
+  var wall = this.createPhysicalWallAdvanced(top, left, bottom, right, wallImage);
   this.level.store(wall, line, row);
   graphicEngine.placeObject(wall.getMesh(), line, 0, row);
   this.totalWalls = this.totalWalls +1;
@@ -178,8 +181,8 @@ Initializer.prototype.createGridLines = function () {
 
 };
 
-Initializer.prototype.createPhysicalWallAdvanced = function (top, left, bottom, right, wallMaterial) {
-  return new LongWall( graphicEngine.UNIT_SIZE, bottom - top, right - left, wallMaterial);
+Initializer.prototype.createPhysicalWallAdvanced = function (top, left, bottom, right, wallImage) {
+  return new LongWall( graphicEngine.UNIT_SIZE, bottom - top, right - left, wallImage);
 };
 
 Initializer.prototype.createPhysicalWallSimple = function (line, row, wallMaterial) {

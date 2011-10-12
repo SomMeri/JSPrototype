@@ -130,18 +130,6 @@ var BlockGeometry = function (unit, height, width, materials) {
   depth_max = half_unit + (width - 1)* unit,
   depth_min = - half_unit;
 
-  if (typeof materials === "undefined") {
-    materials = new Array();
-    materials[0] = _material;
-    materials[1] = _material;
-    materials[2] = _material;
-    materials[3] = _material;
-    materials[4] = _material;
-    materials[5] = _material;
-  } else {
-    
-  }
-
   v(  width_max,  height_max,  depth_min );
   v(  width_max,  height_min,  depth_min );
   v(  width_min,  height_min,  depth_min );
@@ -152,22 +140,22 @@ var BlockGeometry = function (unit, height, width, materials) {
   v(  width_min,  height_max,  depth_max );
 
   //up face
-  f4( 0, 1, 2, 3, materials[Math.floor(Math.random()*5)] );
+  f4( 0, 1, 2, 3, materials[0] );
   
   //down face
-  f4( 4, 7, 6, 5, materials[Math.floor(Math.random()*5)] );
+  f4( 4, 7, 6, 5, materials[1] );
   
   //right face
-  f4( 0, 4, 5, 1, materials[Math.floor(Math.random()*5)] );
+  f4( 0, 4, 5, 1, materials[2] );
 
   //  //bottom face
 //  f4( 1, 5, 6, 2, dummyMaterial );
   
   //left face
-  f4( 2, 6, 7, 3, materials[Math.floor(Math.random()*5)] );
+  f4( 2, 6, 7, 3, materials[3] );
 
   //top face
-  f4( 4, 0, 3, 7, materials[Math.floor(Math.random()*5)] );
+  f4( 4, 0, 3, 7, materials[4] );
 
   function v(x, y, z) {
 
@@ -194,17 +182,42 @@ var BlockGeometry = function (unit, height, width, materials) {
 BlockGeometry.prototype = new THREE.Geometry();
 BlockGeometry.prototype.constructor = BlockGeometry;
 
-var LongWall = function (unit, height, width, material) {
+var LongWall = function (unit, height, width, image) {
   this.geometry;
   this.mesh;
   
+  //TODO those repeats are surely wrong
+  var wallTextureUp = new THREE.Texture( image, new THREE.UVMapping(), THREE.RepeatWrapping, THREE.RepeatWrapping);;
+  wallTextureUp.repeat.x = height;
+  wallTextureUp.repeat.y = 1;
+  wallTextureUp.repeat.z = 1;
+
+  var wallTextureDown = new THREE.Texture( image, new THREE.UVMapping(), THREE.RepeatWrapping, THREE.RepeatWrapping);;
+  wallTextureDown.repeat.x = 1;
+  wallTextureDown.repeat.y = height;
+  wallTextureDown.repeat.z = 1;
+
+  var wallTextureRight = new THREE.Texture( image, new THREE.UVMapping(), THREE.RepeatWrapping, THREE.RepeatWrapping);;
+  wallTextureRight.repeat.x = 1;
+  wallTextureRight.repeat.y = width;
+  wallTextureRight.repeat.z = 1;
+
+  var wallTextureLeft = new THREE.Texture( image, new THREE.UVMapping(), THREE.RepeatWrapping, THREE.RepeatWrapping);;
+  wallTextureLeft.repeat.x = 1;
+  wallTextureLeft.repeat.y = width;
+  wallTextureLeft.repeat.z = 1;
+
+  var wallTextureTop = new THREE.Texture( image, new THREE.UVMapping(), THREE.RepeatWrapping, THREE.RepeatWrapping);;
+  wallTextureTop.repeat.x = height;
+  wallTextureTop.repeat.y = width;
+  wallTextureTop.repeat.z = 1;
+
   materials = new Array();
-  materials[0] = material;
-  materials[1] = material;
-  materials[2] = material;
-  materials[3] = material;
-  materials[4] = material;
-  materials[5] = material;
+  materials[0] = new THREE.MeshBasicMaterial( { map: wallTextureUp, opacity: 1 } );
+  materials[1] = new THREE.MeshBasicMaterial( { map: wallTextureDown, opacity: 1 } );
+  materials[2] = new THREE.MeshBasicMaterial( { map: wallTextureRight, opacity: 1 } );
+  materials[3] = new THREE.MeshBasicMaterial( { map: wallTextureLeft, opacity: 1 } );
+  materials[4] = new THREE.MeshBasicMaterial( { map: wallTextureTop, opacity: 1 } );
 
   this.geometry = new BlockGeometry(unit, height, width, materials);
   this.mesh = new THREE.Mesh( this.geometry, new THREE.MeshFaceMaterial());
