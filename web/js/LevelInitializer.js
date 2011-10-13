@@ -19,15 +19,8 @@ Initializer.prototype.initialize = function () {
   this.graphicEngine.setGeneralSize(this.height, this.width);
   //TODO toto cele upratat, nech tie graf veci robi graphic engine
   
-  //var wallTexture = THREE.ImageUtils.loadTexture("../textures/test.PNG");
-  //var wallTexture = THREE.ImageUtils.loadTexture("../textures/wallPower2.PNG");
-  
   var wallImage = new Image();
-  //wallImage.src = '../textures/wallPower2.PNG';
   wallImage.src = '../textures/SokobanWallTexture.PNG';
-  
-  //var wallMaterial = new THREE.MeshLambertMaterial( { color: 0x1FDFDF, opacity: 1, shading: THREE.FlatShading } );
-  //var wallMaterial = new THREE.MeshNormalMaterial();
   
   var boxTexture1 = THREE.ImageUtils.loadTexture("../textures/boxtest.PNG");
   var boxMaterial1 = new THREE.MeshBasicMaterial( { map: boxTexture1, opacity: 1, shading: THREE.FlatShading } );
