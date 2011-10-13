@@ -23,7 +23,8 @@ Initializer.prototype.initialize = function () {
   //var wallTexture = THREE.ImageUtils.loadTexture("../textures/wallPower2.PNG");
   
   var wallImage = new Image();
-  wallImage.src = '../textures/wallPower2.PNG';
+  //wallImage.src = '../textures/wallPower2.PNG';
+  wallImage.src = '../textures/SokobanWallTexture.PNG';
   
   //var wallMaterial = new THREE.MeshLambertMaterial( { color: 0x1FDFDF, opacity: 1, shading: THREE.FlatShading } );
   //var wallMaterial = new THREE.MeshNormalMaterial();

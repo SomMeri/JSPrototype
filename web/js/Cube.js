@@ -130,29 +130,30 @@ var BlockGeometry = function (unit, height, width, materials) {
   depth_max = half_unit + (width - 1)* unit,
   depth_min = - half_unit;
 
-  v(  width_max,  height_max,  depth_min );
-  v(  width_max,  height_min,  depth_min );
-  v(  width_min,  height_min,  depth_min );
-  v(  width_min,  height_max,  depth_min );
-  v(  width_max,  height_max,  depth_max );
-  v(  width_max,  height_min,  depth_max );
-  v(  width_min,  height_min,  depth_max );
-  v(  width_min,  height_max,  depth_max );
+  v(  width_max,  height_max,  depth_min );//0
+  v(  width_max,  height_min,  depth_min );//1
+  v(  width_min,  height_min,  depth_min );//2
+  v(  width_min,  height_max,  depth_min );//3
+  v(  width_max,  height_max,  depth_max );//4
+  v(  width_max,  height_min,  depth_max );//5
+  v(  width_min,  height_min,  depth_max );//6
+  v(  width_min,  height_max,  depth_max );//7
 
   //up face
   f4( 0, 1, 2, 3, materials[0] );
   
   //down face
-  f4( 4, 7, 6, 5, materials[1] );
+  f4( 5, 4, 7, 6, materials[1] );
   
   //right face
-  f4( 0, 4, 5, 1, materials[2] );
+  f4( 4, 5, 1, 0, materials[2] );
 
   //  //bottom face
   f4( 1, 5, 6, 2, materials[5] );
   
   //left face
-  f4( 2, 6, 7, 3, materials[3] );
+  f4( 6, 7, 3, 2, materials[3] );
+  //f4( 2, 6, 7, 3, materials[3] );
 
   //top face
   f4( 4, 0, 3, 7, materials[4] );
@@ -193,18 +194,18 @@ var LongWall = function (unit, height, width, image) {
   wallTextureUp.repeat.z = 1;
 
   var wallTextureDown = new THREE.Texture( image, new THREE.UVMapping(), THREE.RepeatWrapping, THREE.RepeatWrapping);;
-  wallTextureDown.repeat.x = 1;
-  wallTextureDown.repeat.y = height;
+  wallTextureDown.repeat.x = height;
+  wallTextureDown.repeat.y = 1;
   wallTextureDown.repeat.z = 1;
 
   var wallTextureRight = new THREE.Texture( image, new THREE.UVMapping(), THREE.RepeatWrapping, THREE.RepeatWrapping);;
-  wallTextureRight.repeat.x = 1;
-  wallTextureRight.repeat.y = width;
+  wallTextureRight.repeat.x = width;
+  wallTextureRight.repeat.y = 1;
   wallTextureRight.repeat.z = 1;
 
   var wallTextureLeft = new THREE.Texture( image, new THREE.UVMapping(), THREE.RepeatWrapping, THREE.RepeatWrapping);;
-  wallTextureLeft.repeat.x = 1;
-  wallTextureLeft.repeat.y = width;
+  wallTextureLeft.repeat.x = width;
+  wallTextureLeft.repeat.y = 1;
   wallTextureLeft.repeat.z = 1;
 
   var wallTextureTop = new THREE.Texture( image, new THREE.UVMapping(), THREE.RepeatWrapping, THREE.RepeatWrapping);;
