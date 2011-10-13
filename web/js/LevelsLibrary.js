@@ -56,7 +56,7 @@ var LevelsLibrary = function () {
   this.names.push('The Real One');
   this.levels.push(realLevel);
 
-  this.names.push('Wall-Less Challenge');
+  this.names.push('Invisible Walls');
   this.levels.push(wallLessLevel);
 
   this.names.push('The Huge');
