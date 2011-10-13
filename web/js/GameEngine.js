@@ -229,6 +229,7 @@ var GameEngine = function ( _graphicEngine, _level, _updateStatsCallback ) {
   this.robotRow;
   
   this.movesHistory;
+  this.levelOver;
 
   this.resetLevel();
 };
@@ -236,6 +237,9 @@ var GameEngine = function ( _graphicEngine, _level, _updateStatsCallback ) {
 GameEngine.prototype.constructor = GameEngine;
 
 GameEngine.prototype.canMove = function (lineOffset, rowOffset) {
+  if (this.levelOver)
+    return false;
+  
   var nextLine = this.robotLine + lineOffset, nextRow = this.robotRow + rowOffset;
   if (this.level.isEmpty(nextLine, nextRow)) {
     return true;
@@ -333,7 +337,7 @@ GameEngine.prototype.moveRight = function () {
 
 GameEngine.prototype.handlePossibleEndgame = function () {
   if (0 == this.level.bricklessDestinations()) {
-    alert('Bwahaha');
+    this.levelOver = true;
     this.endLevelGraphics.initialize(this.level.allStoredObjects(), this.endLevelModifier);
     this.endLevelGraphics.perform();
     this.endLevelModifier = this.endLevelModifier * -1;
@@ -348,6 +352,7 @@ GameEngine.prototype.resetLevel = function (_level) {
     return ;
   }
   
+  this.levelOver = false;
   this.level = this.originalLevel.clone();
   var initializer = new Initializer(this.graphicEngine, this.level);
   initializer.initialize();
