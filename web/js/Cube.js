@@ -45,7 +45,7 @@ var CubeGeometry = function (unit, materials, hasUp, hasDown, hasLeft, hasRight)
     f4( 0, 4, 5, 1, materials[Math.floor(Math.random()*5)] );
 
   //  //bottom face
-//  f4( 1, 5, 6, 2, dummyMaterial );
+  f4( 1, 5, 6, 2, materials[Math.floor(Math.random()*5)] );
   
   //left face
   if (hasLeft)
@@ -149,7 +149,7 @@ var BlockGeometry = function (unit, height, width, materials) {
   f4( 0, 4, 5, 1, materials[2] );
 
   //  //bottom face
-//  f4( 1, 5, 6, 2, dummyMaterial );
+  f4( 1, 5, 6, 2, materials[5] );
   
   //left face
   f4( 2, 6, 7, 3, materials[3] );
@@ -218,6 +218,7 @@ var LongWall = function (unit, height, width, image) {
   materials[2] = new THREE.MeshBasicMaterial( { map: wallTextureRight, opacity: 1 } );
   materials[3] = new THREE.MeshBasicMaterial( { map: wallTextureLeft, opacity: 1 } );
   materials[4] = new THREE.MeshBasicMaterial( { map: wallTextureTop, opacity: 1 } );
+  materials[5] = new THREE.MeshBasicMaterial( { color: 0x303030, opacity: 1 } );
 
   this.geometry = new BlockGeometry(unit, height, width, materials);
   this.mesh = new THREE.Mesh( this.geometry, new THREE.MeshFaceMaterial());

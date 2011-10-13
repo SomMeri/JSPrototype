@@ -162,6 +162,19 @@ Level.prototype.bricklessDestinations = function () {
   return result;
 };
 
+Level.prototype.allStoredObjects = function () {
+  var result = new Array();
+  for(var line = 0; line < this.height; line++) {
+    for(var row = 0; row < this.width; row++) {
+      var thing = this.obtain(line, row);
+      if (!(thing === undefined) && !(thing===null)) {
+        result.push(thing);
+      }
+    }
+  }
+  return result;
+};
+
 var Move = function (_lineOffset, _rowOffset, _movedBrick) {
   this.lineOffset = _lineOffset;
   this.rowOffset = _rowOffset;
@@ -207,6 +220,8 @@ var GameEngine = function ( _graphicEngine, _level, _updateStatsCallback ) {
   //initialization
   this.graphicEngine = _graphicEngine;
   this.originalLevel = _level;
+  this.endLevelGraphics = new EndLevelGraphics(graphicEngine.getRenderer());
+  this.endLevelModifier = 1;
   this.level = this.originalLevel.clone();
   this.updateStatsCallback = _updateStatsCallback;
   this.robot;
@@ -318,8 +333,10 @@ GameEngine.prototype.moveRight = function () {
 
 GameEngine.prototype.handlePossibleEndgame = function () {
   if (0 == this.level.bricklessDestinations()) {
-    //TODO do something for real
-    alert('Game Done');
+    alert('Bwahaha');
+    this.endLevelGraphics.initialize(this.level.allStoredObjects(), this.endLevelModifier);
+    this.endLevelGraphics.perform();
+    this.endLevelModifier = this.endLevelModifier * -1;
   }
 };
 

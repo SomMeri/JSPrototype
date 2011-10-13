@@ -42,12 +42,7 @@ Initializer.prototype.initialize = function () {
   materials[3] = boxMaterial1;
   materials[4] = boxMaterial2;
   materials[5] = boxMaterial3;
-//  materials[0] = boxMaterial;
-//  materials[1] = boxMaterial;
-//  materials[2] = boxMaterial;
-//  materials[3] = boxMaterial;
-//  materials[4] = boxMaterial;
-//  materials[5] = boxMaterial;
+  
   //paint objects
   for(var line = 0; line < this.height; line++) {
     for(var row = 0; row < this.width; row++) {
