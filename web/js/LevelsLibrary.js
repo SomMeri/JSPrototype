@@ -35,15 +35,29 @@ var LevelsLibrary = function () {
                             '5  $ $  .  $ $  5',
                             '511$2222@3333$115',
                             '5  $ $  .  $ $  5',
-                            '5  . ..$#$.. .  5',
+                            '5  . ..$4$.. .  5',
                             '511111     333335',
                             '     2222222     ');
+
+  var wallLessLevel = new Level(
+      '           ########',
+      '           #      #',
+      '############      #',
+      '#    #         # .#',
+      '#    #$    #   # .#',
+      '#          #      #',
+      '#    #$    ########',
+      '# @  #     #       ',
+      '############       ');
 
   this.names.push('The Smallest');
   this.levels.push(smallestLevel);
 
   this.names.push('The Real One');
   this.levels.push(realLevel);
+
+  this.names.push('Wall-Less Challenge');
+  this.levels.push(wallLessLevel);
 
   this.names.push('The Huge');
   this.levels.push(hugeLevel);
