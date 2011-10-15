@@ -210,6 +210,10 @@ GraphicEngine.prototype.offsetObject = function(mesh, x, y, z) {
   mesh.position.addSelf(offset);
 };
 
+GraphicEngine.prototype.rotateObject = function(mesh, y_rotation) {
+  mesh.rotation.y = y_rotation;
+};
+
 /**
  * Only one that calls also render method.
  * 

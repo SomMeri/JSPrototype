@@ -278,7 +278,9 @@ GameEngine.prototype.moveRobot = function (lineOffset, rowOffset) {
 
 GameEngine.prototype.moveIfYouCan = function (lineOffset, rowOffset) {
   var nextLine = this.robotLine + lineOffset, nextRow = this.robotRow + rowOffset;
+  var result = false;
   if (this.canMove(lineOffset, rowOffset)) {
+    result = true;
     var movedBrick = false;
     if (this.level.isBrick(nextLine, nextRow)) {
       this.moveBrick(nextLine, nextRow, lineOffset, rowOffset);
@@ -286,11 +288,10 @@ GameEngine.prototype.moveIfYouCan = function (lineOffset, rowOffset) {
     }
     //move robot
     this.moveRobot(lineOffset, rowOffset);
-    
-    this.graphicEngine.render();
     this.movesHistory.push(lineOffset, rowOffset, movedBrick);
   }
   this.updateStatsCallback();
+  return result;
 };
 
 GameEngine.prototype.undoMove= function () {
@@ -310,28 +311,40 @@ GameEngine.prototype.undoMove= function () {
 GameEngine.prototype.moveUp = function () {
   var lineOffset = 0;
   var rowOffset = -1;
-  this.moveIfYouCan(lineOffset, rowOffset);
+  if (this.moveIfYouCan(lineOffset, rowOffset)) {
+    this.graphicEngine.rotateObject(this.robot.getMesh(), 0);
+    this.graphicEngine.render();
+  }
   this.handlePossibleEndgame();
 };
 
 GameEngine.prototype.moveDown = function () {
   var lineOffset = 0;
   var rowOffset = 1;
-  this.moveIfYouCan(lineOffset, rowOffset);
+  if (this.moveIfYouCan(lineOffset, rowOffset)) {
+    this.graphicEngine.rotateObject(this.robot.getMesh(), Math.PI);
+    this.graphicEngine.render();
+  }
   this.handlePossibleEndgame();
 };
 
 GameEngine.prototype.moveLeft = function () {
   var lineOffset = -1;
   var rowOffset = 0;
-  this.moveIfYouCan(lineOffset, rowOffset);
+  if (this.moveIfYouCan(lineOffset, rowOffset)) {
+    this.graphicEngine.rotateObject(this.robot.getMesh(), Math.PI/2);
+    this.graphicEngine.render();
+  }
   this.handlePossibleEndgame();
 };
 
 GameEngine.prototype.moveRight = function () {
   var lineOffset = 1;
   var rowOffset = 0;
-  this.moveIfYouCan(lineOffset, rowOffset);
+  if (this.moveIfYouCan(lineOffset, rowOffset)) {
+    this.graphicEngine.rotateObject(this.robot.getMesh(), -Math.PI/2);
+    this.graphicEngine.render();
+  }
   this.handlePossibleEndgame();
 };
 
