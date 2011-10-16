@@ -229,6 +229,7 @@ body {
 	  		function changeLevel(levelChooser) {
 	  		  var levelId = levelChooser.options[levelChooser.selectedIndex].value;
 	  		  gameEngine.resetLevel(library.levels[levelId]);
+			  unBlockGUI();
 	  		}
 
 			function clear() {
@@ -237,6 +238,7 @@ body {
 				}
 				gameEngine.resetLevel();
 				graphicEngine.render();
+				unBlockGUI();
 			}
 
 			function blockGUI() {
@@ -248,9 +250,12 @@ body {
 			}
 
 			function undo() {
-				gameEngine.undoMove();
-		    	renderer.setSize(window.innerWidth, window.innerHeight);
-				graphicEngine.render();
+			  if (GUIBlocked)
+			    return ;
+			  
+			  blockGUI();
+			  gameEngine.undoMove(unBlockGUI);
+			  graphicEngine.render();
 			}
 
 		</script>

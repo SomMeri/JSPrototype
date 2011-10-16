@@ -292,13 +292,6 @@ GameEngine.prototype.stepsSoFar = function () {
   return this.movesHistory.stepsNumber();
 };
 
-GameEngine.prototype.moveBrick = function (line, row, lineOffset, rowOffset) {
-  //move brick
-  var brick = this.level.obtain(line, row);
-  this.level.moveBrick(line, row, line + lineOffset, row + rowOffset);
-  this.graphicEngine.offsetObject(brick.getMesh(), lineOffset, 0, rowOffset);
-};
-
 GameEngine.prototype.moveRobot = function (lineOffset, rowOffset) {
   var nextLine = this.robotLine + lineOffset, nextRow = this.robotRow + rowOffset;
   
@@ -315,7 +308,6 @@ GameEngine.prototype.moveIfYouCan = function (lineOffset, rowOffset, doneCallbac
     var movedBrick = false;
     var objectsToMove = new Array();
     if (this.level.isBrick(nextLine, nextRow)) {
-      //this.moveBrick(nextLine, nextRow, lineOffset, rowOffset);
       objectsToMove.push(this.level.obtain(nextLine, nextRow).getMesh());
       this.level.moveBrick(nextLine, nextRow, nextLine + lineOffset, nextRow + rowOffset);
       movedBrick = true;
@@ -332,18 +324,24 @@ GameEngine.prototype.moveIfYouCan = function (lineOffset, rowOffset, doneCallbac
   return result;
 };
 
-GameEngine.prototype.undoMove= function () {
+GameEngine.prototype.undoMove= function (doneCallback) {
   if (this.movesHistory.hasHistory()) {
     var move = this.movesHistory.pop().invert();
     var brickLine = this.robotLine - move.lineOffset, brickRow = this.robotRow - move.rowOffset;
     this.moveRobot(move.lineOffset, move.rowOffset);
     
+    var objectsToMove = new Array();
     if (move.movedBrick) {
-      this.moveBrick(brickLine, brickRow, move.lineOffset, move.rowOffset);
+      objectsToMove.push(this.level.obtain(brickLine, brickRow).getMesh());
+      this.level.moveBrick(brickLine, brickRow, brickLine + move.lineOffset, brickRow + move.rowOffset);
     }
+    
+    objectsToMove.push(this.robot.getMesh());
+    this.graphicEngine.continuousOffsetObjects(objectsToMove, move.lineOffset, 0, move.rowOffset, doneCallback);
     
     this.updateStatsCallback();
   }
+  doneCallback();
 };
 
 GameEngine.prototype.moveForward = function (doneCallback) {
