@@ -1,5 +1,4 @@
 //TODO kamera musi startovat z krajsieho uhla
-//TODO UNDO MOVE musim prerobit na tocenie!!!!
 //TODO end level - hore div s click next level 
 
 function set ()
