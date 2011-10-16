@@ -214,6 +214,83 @@ GraphicEngine.prototype.rotateObject = function(mesh, y_rotation) {
   mesh.rotation.y = y_rotation;
 };
 
+GraphicEngine.prototype.continuosRotate = function(mesh, y_rotation, direction) {
+  //normalize rotations
+  var round = 2*Math.PI;
+  y_rotation = normalizeArc(y_rotation);
+  mesh.rotation.y = normalizeArc(mesh.rotation.y);
+
+  var difference = shortestDifference(mesh.rotation.y, y_rotation);
+  var refreshRate = 1000/60;
+  var modifier =  difference / refreshRate;
+  
+  //normalize rotations again
+  if (modifier > 0 && y_rotation < mesh.rotation.y)
+    y_rotation += round;
+
+  if (modifier < 0 && y_rotation > mesh.rotation.y)
+    y_rotation -= round;
+
+  var turningTimer = window.setInterval(loop, refreshRate);
+
+  function loop(){
+    if (rotationDone()) {
+      finishTurning();
+      return ;
+    }
+
+    mesh.rotation.y += modifier;
+    renderer.render(scene, camera);
+  };
+
+  function rotationDone(){
+    return (modifier >=0 && y_rotation < mesh.rotation.y) || (modifier <0 && y_rotation >= mesh.rotation.y);
+  };
+  
+  function finishTurning(){
+    window.clearInterval(turningTimer);
+    mesh.rotation.y = y_rotation;
+    renderer.render(scene, camera);
+  };
+
+  function normalizeArc(arc){
+    while (arc >= round) {
+      arc -= round;
+    }
+
+    while (arc < 0){
+      arc += round;
+    }
+    
+    return arc;
+  };
+
+  function shortestDifference(arcFrom, arcTo){
+    var clock = clockwiseDifference(arcFrom, arcTo);
+    var anticlock = anticlockwiseDifference(arcFrom, arcTo);
+    
+    if (clock < anticlock) {
+      return -clock;
+    }
+    
+    return anticlock;
+  };
+
+  function clockwiseDifference(arcFrom, arcTo){
+    if (arcFrom < arcTo)
+      return arcFrom + round - arcTo;
+
+    return arcFrom - arcTo;
+  };
+
+  function anticlockwiseDifference(arcFrom, arcTo){
+    if (arcFrom < arcTo)
+      return arcTo - arcFrom;
+
+    return round - arcFrom + arcTo;
+  };
+};
+
 /**
  * Only one that calls also render method.
  * 

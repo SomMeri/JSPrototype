@@ -167,10 +167,10 @@ body {
 			function onDocumentKeyDown( event ) {
 
 				switch( event.keyCode ) {
-					case 37: gameEngine.moveLeft(); break;
-					case 38: gameEngine.moveUp(); break;
-					case 39: gameEngine.moveRight(); break;
-					case 40: gameEngine.moveDown(); break;
+					case 37: gameEngine.turnLeft(); break;
+					case 38: gameEngine.moveForward(); break;
+					case 39: gameEngine.turnRight(); break;
+					case 40: gameEngine.moveBackward(); break;
 				 }
 			}
 

@@ -211,6 +211,42 @@ MovesHistory.prototype.hasHistory = function () {
   return this.moves.length > 0;
 };
 
+var DirectionHelper = function () {
+  //0 - up; 1 - right; 2 - down; 3 - left;
+  this.direction = 0;
+  this.rotations =   [ 0, -Math.PI/2, Math.PI, Math.PI/2 ];
+  this.lineOffsets = [ 0, 1, 0, -1  ];
+  this.rowOffsets =  [ -1, 0, 1, 0  ];
+};
+DirectionHelper.prototype.constructor = DirectionHelper;
+
+DirectionHelper.prototype.turnLeft = function () {
+  this.direction--;
+  
+  if (this.direction<0) 
+    this.direction=3;
+};
+
+DirectionHelper.prototype.turnRight = function () {
+  this.direction++;
+ 
+  if (this.direction>3) 
+    this.direction=0;
+};
+
+DirectionHelper.prototype.getRotation = function () {
+  return this.rotations[this.direction];
+};
+
+DirectionHelper.prototype.getLineOffset = function () {
+  return this.lineOffsets[this.direction];
+};
+
+DirectionHelper.prototype.getRowOffset = function () {
+  return this.rowOffsets[this.direction];
+};
+
+
 var GameEngine = function ( _graphicEngine, _level, _updateStatsCallback ) {
   //configuration
   this.robotColor = 0x80DF1F;
@@ -224,6 +260,8 @@ var GameEngine = function ( _graphicEngine, _level, _updateStatsCallback ) {
   this.endLevelModifier = 1;
   this.level = this.originalLevel.clone();
   this.updateStatsCallback = _updateStatsCallback;
+  
+  this.robotDirection = new DirectionHelper();
   this.robot;
   this.robotLine;
   this.robotRow;
@@ -308,44 +346,34 @@ GameEngine.prototype.undoMove= function () {
   }
 };
 
-GameEngine.prototype.moveUp = function () {
-  var lineOffset = 0;
-  var rowOffset = -1;
+GameEngine.prototype.moveForward = function () {
+  var lineOffset = this.robotDirection.getLineOffset();
+  var rowOffset = this.robotDirection.getRowOffset();
   if (this.moveIfYouCan(lineOffset, rowOffset)) {
-    this.graphicEngine.rotateObject(this.robot.getMesh(), 0);
     this.graphicEngine.render();
   }
   this.handlePossibleEndgame();
 };
 
-GameEngine.prototype.moveDown = function () {
-  var lineOffset = 0;
-  var rowOffset = 1;
+GameEngine.prototype.moveBackward = function () {
+  var lineOffset = - this.robotDirection.getLineOffset();
+  var rowOffset = - this.robotDirection.getRowOffset();
   if (this.moveIfYouCan(lineOffset, rowOffset)) {
-    this.graphicEngine.rotateObject(this.robot.getMesh(), Math.PI);
     this.graphicEngine.render();
   }
   this.handlePossibleEndgame();
 };
 
-GameEngine.prototype.moveLeft = function () {
-  var lineOffset = -1;
-  var rowOffset = 0;
-  if (this.moveIfYouCan(lineOffset, rowOffset)) {
-    this.graphicEngine.rotateObject(this.robot.getMesh(), Math.PI/2);
-    this.graphicEngine.render();
-  }
-  this.handlePossibleEndgame();
+GameEngine.prototype.turnLeft = function () {
+  this.robotDirection.turnLeft();
+  this.graphicEngine.continuosRotate(this.robot.getMesh(), this.robotDirection.getRotation());
+  this.graphicEngine.render();
 };
 
-GameEngine.prototype.moveRight = function () {
-  var lineOffset = 1;
-  var rowOffset = 0;
-  if (this.moveIfYouCan(lineOffset, rowOffset)) {
-    this.graphicEngine.rotateObject(this.robot.getMesh(), -Math.PI/2);
-    this.graphicEngine.render();
-  }
-  this.handlePossibleEndgame();
+GameEngine.prototype.turnRight = function () {
+  this.robotDirection.turnRight();
+  this.graphicEngine.continuosRotate(this.robot.getMesh(), this.robotDirection.getRotation());
+  this.graphicEngine.render();
 };
 
 GameEngine.prototype.handlePossibleEndgame = function () {
