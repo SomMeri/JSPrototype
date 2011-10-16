@@ -68,10 +68,13 @@ GraphicEngine.prototype.render = function() {
   renderer.render(scene, camera);
 };
 
-GraphicEngine.prototype.placeObject = function(mesh, x, y, z) {
-  mesh.position.x = (x - this.height_shift) * this.UNIT_SIZE + this.HALF;
+GraphicEngine.prototype.placeObject = function(mesh, x, y, z, shift) {
+  if (shift===undefined)
+    shift = 0;
+  
+  mesh.position.x = (x - this.height_shift) * this.UNIT_SIZE + this.HALF + shift;
   mesh.position.y = y * this.UNIT_SIZE + this.HALF;
-  mesh.position.z = (z - this.width_shift) * this.UNIT_SIZE + this.HALF;
+  mesh.position.z = (z - this.width_shift) * this.UNIT_SIZE + this.HALF + shift;
   mesh.overdraw = true;
   scene.addObject(mesh);
 };

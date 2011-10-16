@@ -66,7 +66,7 @@ body {
 	<div id="container">
 	<div id="upperrow">
 		<span class="gameoptions" > 
-			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a>
+			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a> | <a href="javascript:nextLevel();">NEXT LEVEL</a>
 		</span>
 		<span> &nbsp; </span>
 		<span class="leveloptions" > 
@@ -230,6 +230,18 @@ body {
 	  		  var levelId = levelChooser.options[levelChooser.selectedIndex].value;
 	  		  gameEngine.resetLevel(library.levels[levelId]);
 			  unBlockGUI();
+	  		}
+
+	  		function nextLevel() {
+	  		  var levelChooser = document.getElementById("chooseLevel");
+	  		  var levelId = levelChooser.options[levelChooser.selectedIndex].value;
+	  		  levelId++;
+	  		  if (levelChooser.options.length <= levelId) {
+	  		    alert('That was final level. Rotating to the first one.');
+	  		    levelId = 0;
+	  		  }
+	  		  levelChooser.selectedIndex = levelId;   
+	  		  changeLevel(levelChooser);
 	  		}
 
 			function clear() {

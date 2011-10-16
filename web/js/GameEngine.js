@@ -1,6 +1,6 @@
 //TODO kamera musi startovat z krajsieho uhla
 //TODO end level - hore div s click next level 
-
+//TODO cache all used images 
 function set ()
   {
     var result = {};
