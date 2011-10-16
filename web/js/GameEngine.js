@@ -325,6 +325,8 @@ GameEngine.prototype.moveIfYouCan = function (lineOffset, rowOffset, doneCallbac
     objectsToMove.push(this.robot.getMesh());
     this.graphicEngine.continuousOffsetObjects(objectsToMove, lineOffset, 0, rowOffset, doneCallback);
     this.movesHistory.push(lineOffset, rowOffset, movedBrick);
+  } else {
+    doneCallback();
   }
   this.updateStatsCallback();
   return result;
