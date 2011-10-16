@@ -401,6 +401,7 @@ GameEngine.prototype.resetLevel = function (_level) {
   this.robotRow = initializer.robotRow;
   this.robot = initializer.robot;
   
+  this.robotDirection = new DirectionHelper();
   this.movesHistory = new MovesHistory();
   this.updateStatsCallback();
 };
