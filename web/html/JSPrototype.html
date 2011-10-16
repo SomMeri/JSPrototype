@@ -95,7 +95,7 @@ body {
 	
 	<script type="text/javascript">
 
-			var homeofcanvas, interval,
+			var homeofcanvas, interval, GUIBlocked = false,
 			renderer,
 			plane, cube, linesMaterial,
 			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
@@ -164,12 +164,16 @@ body {
 			}
 			
 			function onDocumentKeyDown( event ) {
-
+				if (GUIBlocked)
+				  return ;
+				
+				blockGUI();
+				
 				switch( event.keyCode ) {
-					case 37: gameEngine.turnLeft(); break;
-					case 38: gameEngine.moveForward(); break;
-					case 39: gameEngine.turnRight(); break;
-					case 40: gameEngine.moveBackward(); break;
+					case 37: gameEngine.turnLeft(unBlockGUI); break;
+					case 38: gameEngine.moveForward(unBlockGUI); break;
+					case 39: gameEngine.turnRight(unBlockGUI); break;
+					case 40: gameEngine.moveBackward(unBlockGUI); break;
 				 }
 			}
 
@@ -233,6 +237,14 @@ body {
 				}
 				gameEngine.resetLevel();
 				graphicEngine.render();
+			}
+
+			function blockGUI() {
+			  GUIBlocked = true;
+			}
+
+			function unBlockGUI() {
+			  GUIBlocked = false;
 			}
 
 			function undo() {

@@ -210,7 +210,7 @@ GraphicEngine.prototype.offsetObject = function(mesh, x, y, z) {
   mesh.position.addSelf(offset);
 };
 
-GraphicEngine.prototype.continuousOffsetObjects = function(meshes, x, y, z) {
+GraphicEngine.prototype.continuousOffsetObjects = function(meshes, x, y, z, doneCallback) {
   var offset = new THREE.Vector3(x, y, z).multiplyScalar(this.UNIT_SIZE);
   var refreshRate = 1000/240;
   var step = this.UNIT_SIZE / refreshRate;
@@ -246,6 +246,7 @@ GraphicEngine.prototype.continuousOffsetObjects = function(meshes, x, y, z) {
       meshes[i].position = finalPositions[i];
     }
     renderer.render(scene, camera);
+    doneCallback();
   }
   
   function movementDone() {
@@ -257,7 +258,7 @@ GraphicEngine.prototype.rotateObject = function(mesh, y_rotation) {
   mesh.rotation.y = y_rotation;
 };
 
-GraphicEngine.prototype.continuosRotate = function(mesh, y_rotation, direction) {
+GraphicEngine.prototype.continuosRotate = function(mesh, y_rotation, doneCallback) {
   //normalize rotations
   var round = 2*Math.PI;
   y_rotation = normalizeArc(y_rotation);
@@ -281,6 +282,7 @@ GraphicEngine.prototype.continuosRotate = function(mesh, y_rotation, direction) 
     if (rotationDone(nextRotationY)) {
       window.clearInterval(turningTimer);
       mesh.rotation.y = y_rotation;
+      doneCallback();
     } else {
       mesh.rotation.y = nextRotationY;
     }

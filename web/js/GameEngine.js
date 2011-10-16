@@ -1,12 +1,6 @@
 //TODO kamera musi startovat z krajsieho uhla
-//TODO NICER ENDGAME
-//TODO UP DOWN LEFT TOP ON SIDES
-//TODO textury
-//TODO pekny robot
-//TODO pocitadlo krokov
-//TODO undo redo
-//TODO vypinacie textury
-//TODO shading
+//TODO UNDO MOVE musim prerobit na tocenie!!!!
+//TODO end level - hore div s click next level 
 
 function set ()
   {
@@ -313,7 +307,7 @@ GameEngine.prototype.moveRobot = function (lineOffset, rowOffset) {
   this.robotRow = nextRow;
 };
 
-GameEngine.prototype.moveIfYouCan = function (lineOffset, rowOffset) {
+GameEngine.prototype.moveIfYouCan = function (lineOffset, rowOffset, doneCallback) {
   var nextLine = this.robotLine + lineOffset, nextRow = this.robotRow + rowOffset;
   var result = false;
   if (this.canMove(lineOffset, rowOffset)) {
@@ -329,7 +323,7 @@ GameEngine.prototype.moveIfYouCan = function (lineOffset, rowOffset) {
     //move robot
     this.moveRobot(lineOffset, rowOffset);
     objectsToMove.push(this.robot.getMesh());
-    this.graphicEngine.continuousOffsetObjects(objectsToMove, lineOffset, 0, rowOffset);
+    this.graphicEngine.continuousOffsetObjects(objectsToMove, lineOffset, 0, rowOffset, doneCallback);
     this.movesHistory.push(lineOffset, rowOffset, movedBrick);
   }
   this.updateStatsCallback();
@@ -350,33 +344,33 @@ GameEngine.prototype.undoMove= function () {
   }
 };
 
-GameEngine.prototype.moveForward = function () {
+GameEngine.prototype.moveForward = function (doneCallback) {
   var lineOffset = this.robotDirection.getLineOffset();
   var rowOffset = this.robotDirection.getRowOffset();
-  if (this.moveIfYouCan(lineOffset, rowOffset)) {
+  if (this.moveIfYouCan(lineOffset, rowOffset, doneCallback)) {
     this.graphicEngine.render();
   }
   this.handlePossibleEndgame();
 };
 
-GameEngine.prototype.moveBackward = function () {
+GameEngine.prototype.moveBackward = function (doneCallback) {
   var lineOffset = - this.robotDirection.getLineOffset();
   var rowOffset = - this.robotDirection.getRowOffset();
-  if (this.moveIfYouCan(lineOffset, rowOffset)) {
+  if (this.moveIfYouCan(lineOffset, rowOffset, doneCallback)) {
     this.graphicEngine.render();
   }
   this.handlePossibleEndgame();
 };
 
-GameEngine.prototype.turnLeft = function () {
+GameEngine.prototype.turnLeft = function (doneCallback) {
   this.robotDirection.turnLeft();
-  this.graphicEngine.continuosRotate(this.robot.getMesh(), this.robotDirection.getRotation());
+  this.graphicEngine.continuosRotate(this.robot.getMesh(), this.robotDirection.getRotation(), doneCallback);
   this.graphicEngine.render();
 };
 
-GameEngine.prototype.turnRight = function () {
+GameEngine.prototype.turnRight = function (doneCallback) {
   this.robotDirection.turnRight();
-  this.graphicEngine.continuosRotate(this.robot.getMesh(), this.robotDirection.getRotation());
+  this.graphicEngine.continuosRotate(this.robot.getMesh(), this.robotDirection.getRotation(), doneCallback);
   this.graphicEngine.render();
 };
 
