@@ -258,7 +258,7 @@ var GameEngine = function ( _graphicEngine, _level, _updateStatsCallback ) {
   this.originalLevel = _level;
   this.endLevelGraphics = new EndLevelGraphics(graphicEngine.getRenderer());
   this.endLevelModifier = 1;
-  this.level = this.originalLevel.clone();
+  this.level = this.originalLevel.prototypeclone();
   this.updateStatsCallback = _updateStatsCallback;
   
   this.robotDirection = new DirectionHelper();
@@ -309,7 +309,6 @@ GameEngine.prototype.moveRobot = function (lineOffset, rowOffset) {
   var nextLine = this.robotLine + lineOffset, nextRow = this.robotRow + rowOffset;
   
   this.level.moveRobot(this.robotLine, this.robotRow, nextLine, nextRow);
-  this.graphicEngine.offsetObject(this.robot.getMesh(), lineOffset, 0, rowOffset);
   this.robotLine = nextLine;
   this.robotRow = nextRow;
 };
@@ -320,12 +319,17 @@ GameEngine.prototype.moveIfYouCan = function (lineOffset, rowOffset) {
   if (this.canMove(lineOffset, rowOffset)) {
     result = true;
     var movedBrick = false;
+    var objectsToMove = new Array();
     if (this.level.isBrick(nextLine, nextRow)) {
-      this.moveBrick(nextLine, nextRow, lineOffset, rowOffset);
+      //this.moveBrick(nextLine, nextRow, lineOffset, rowOffset);
+      objectsToMove.push(this.level.obtain(nextLine, nextRow).getMesh());
+      this.level.moveBrick(nextLine, nextRow, nextLine + lineOffset, nextRow + rowOffset);
       movedBrick = true;
     }
     //move robot
     this.moveRobot(lineOffset, rowOffset);
+    objectsToMove.push(this.robot.getMesh());
+    this.graphicEngine.continuousOffsetObjects(objectsToMove, lineOffset, 0, rowOffset);
     this.movesHistory.push(lineOffset, rowOffset, movedBrick);
   }
   this.updateStatsCallback();
@@ -394,7 +398,7 @@ GameEngine.prototype.resetLevel = function (_level) {
   }
   
   this.levelOver = false;
-  this.level = this.originalLevel.clone();
+  this.level = this.originalLevel.prototypeclone();
   var initializer = new Initializer(this.graphicEngine, this.level);
   initializer.initialize();
   this.robotLine = initializer.robotLine;

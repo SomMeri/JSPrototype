@@ -65,7 +65,6 @@ body {
 
 	<div id="container">
 	<div id="upperrow">
-		
 		<span class="gameoptions" > 
 			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a>
 		</span>
@@ -111,19 +110,18 @@ body {
 
 			function init() {
 			  //lets be courageous
-			  Object.prototype.clone = function() {
+			  Object.prototype.prototypeclone = function() {
 			    var newObj = (this instanceof Array) ? [] : {};
 			    for (i in this) {
-			      if (i == 'clone') continue;
+			      if (i == 'prototypeclone') continue;
 			      if (this[i] && typeof this[i] == "object") {
-			        newObj[i] = this[i].clone();
+			        newObj[i] = this[i].prototypeclone();
 			      } else newObj[i] = this[i]
 			    } return newObj;
 			  };
 			  
 			  homeofcanvas = document.getElementById("homeofcanvas");
-				
-				var smallestLevel = new Level('  #####  ',
+			  var smallestLevel = new Level('  #####  ',
 				                      ' #    .# ',
 				                      ' #  @$ # ',
 				                      ' #     # ',
@@ -131,7 +129,8 @@ body {
 				                      ' ####### ');
 				
 				//graphicEngine = new GraphicEngine(500, 100);
-				graphicEngine = new GraphicEngine();
+			    var urdiv = document.getElementById("upperrow");
+				graphicEngine = new GraphicEngine(window.innerWidth, window.innerHeight - urdiv.offsetHeight - 20);
 				gameEngine = new GameEngine(graphicEngine, smallestLevel, refreshStats);
 				renderer = graphicEngine.getRenderer();
 

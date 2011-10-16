@@ -210,6 +210,49 @@ GraphicEngine.prototype.offsetObject = function(mesh, x, y, z) {
   mesh.position.addSelf(offset);
 };
 
+GraphicEngine.prototype.continuousOffsetObjects = function(meshes, x, y, z) {
+  var offset = new THREE.Vector3(x, y, z).multiplyScalar(this.UNIT_SIZE);
+  var refreshRate = 1000/240;
+  var step = this.UNIT_SIZE / refreshRate;
+  var modifier = new THREE.Vector3(x, y, z).multiplyScalar(step);
+  
+  var finalPositions = new Array();
+  for (var i=0; i< meshes.length; i++) {
+    var fp = meshes[i].position.clone();
+    fp.addSelf(offset);
+    finalPositions.push(fp);
+  }
+  
+  //meshes[i].position.addSelf(offset);
+  var movingTimer = window.setInterval(loop, refreshRate);
+  var looped = 0;
+
+  function loop(){
+    looped++;
+    if (movementDone()) {
+      finishMovement();
+      return ;
+    }
+
+    for (var i=0; i< meshes.length; i++) {
+      meshes[i].position.addSelf(modifier);
+    }
+    renderer.render(scene, camera);
+  };
+
+  function finishMovement() {
+    window.clearInterval(movingTimer);
+    for (var i=0; i< meshes.length; i++) {
+      meshes[i].position = finalPositions[i];
+    }
+    renderer.render(scene, camera);
+  }
+  
+  function movementDone() {
+    return looped >= refreshRate;
+  }
+};
+
 GraphicEngine.prototype.rotateObject = function(mesh, y_rotation) {
   mesh.rotation.y = y_rotation;
 };
@@ -221,7 +264,7 @@ GraphicEngine.prototype.continuosRotate = function(mesh, y_rotation, direction) 
   mesh.rotation.y = normalizeArc(mesh.rotation.y);
 
   var difference = shortestDifference(mesh.rotation.y, y_rotation);
-  var refreshRate = 1000/60;
+  var refreshRate = 1000/180;
   var modifier =  difference / refreshRate;
   
   //normalize rotations again
@@ -234,25 +277,20 @@ GraphicEngine.prototype.continuosRotate = function(mesh, y_rotation, direction) 
   var turningTimer = window.setInterval(loop, refreshRate);
 
   function loop(){
-    if (rotationDone()) {
-      finishTurning();
-      return ;
+    var nextRotationY = mesh.rotation.y + modifier;
+    if (rotationDone(nextRotationY)) {
+      window.clearInterval(turningTimer);
+      mesh.rotation.y = y_rotation;
+    } else {
+      mesh.rotation.y = nextRotationY;
     }
-
-    mesh.rotation.y += modifier;
     renderer.render(scene, camera);
   };
 
-  function rotationDone(){
-    return (modifier >=0 && y_rotation < mesh.rotation.y) || (modifier <0 && y_rotation >= mesh.rotation.y);
+  function rotationDone(nextRotationY){
+    return (modifier >=0 && y_rotation < nextRotationY) || (modifier <0 && y_rotation >= nextRotationY);
   };
   
-  function finishTurning(){
-    window.clearInterval(turningTimer);
-    mesh.rotation.y = y_rotation;
-    renderer.render(scene, camera);
-  };
-
   function normalizeArc(arc){
     while (arc >= round) {
       arc -= round;
