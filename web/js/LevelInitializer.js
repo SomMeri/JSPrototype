@@ -1,3 +1,25 @@
+var ImagesLibrary = function() {
+  this.wallImage = new Image();
+  this.wallImage.src = '../textures/SokobanWallTexture.PNG';
+
+  var boxTexture1 = THREE.ImageUtils.loadTexture("../textures/boxtest.PNG");
+  var boxMaterial1 = new THREE.MeshBasicMaterial( { map: boxTexture1, opacity: 1, shading: THREE.FlatShading } );
+  var boxTexture2 = THREE.ImageUtils.loadTexture("../textures/boxtest2.JPG");
+  var boxMaterial2 = new THREE.MeshBasicMaterial( { map: boxTexture2, opacity: 1, shading: THREE.FlatShading } );
+  var boxTexture3 = THREE.ImageUtils.loadTexture("../textures/boxtest3.JPG");
+  var boxMaterial3 = new THREE.MeshBasicMaterial( { map: boxTexture3, opacity: 1, shading: THREE.FlatShading } );
+
+  this.materials = new Array();
+  this.materials[0] = boxMaterial1;
+  this.materials[1] = boxMaterial2;
+  this.materials[2] = boxMaterial3;
+  this.materials[3] = boxMaterial1;
+  this.materials[4] = boxMaterial2;
+  this.materials[5] = boxMaterial3;
+};
+ImagesLibrary.prototype.constructor = ImagesLibrary;
+var globalImagesLibrary = new ImagesLibrary();
+
 var Initializer = function ( _graphicEngine, _level ) {
   this.graphicEngine = _graphicEngine;
   this.level = _level;
@@ -31,40 +53,22 @@ Initializer.prototype.initialize = function () {
 };
 
 Initializer.prototype.createWalls = function () {
-  var wallImage = new Image();
-  wallImage.src = '../textures/SokobanWallTexture.PNG';
-  
   //paint objects
   for(var line = 0; line < this.height; line++) {
     for(var row = 0; row < this.width; row++) {
       if (this.level.isWall(line, row)) {
-        this.createWallAdvanced(line, row, wallImage);
+        this.createWallAdvanced(line, row, globalImagesLibrary.wallImage);
       } 
     }
   }
 };
 
 Initializer.prototype.createBricks = function () {
-  var boxTexture1 = THREE.ImageUtils.loadTexture("../textures/boxtest.PNG");
-  var boxMaterial1 = new THREE.MeshBasicMaterial( { map: boxTexture1, opacity: 1, shading: THREE.FlatShading } );
-  var boxTexture2 = THREE.ImageUtils.loadTexture("../textures/boxtest2.JPG");
-  var boxMaterial2 = new THREE.MeshBasicMaterial( { map: boxTexture2, opacity: 1, shading: THREE.FlatShading } );
-  var boxTexture3 = THREE.ImageUtils.loadTexture("../textures/boxtest3.JPG");
-  var boxMaterial3 = new THREE.MeshBasicMaterial( { map: boxTexture3, opacity: 1, shading: THREE.FlatShading } );
-
-  var materials = new Array();
-  materials[0] = boxMaterial1;
-  materials[1] = boxMaterial2;
-  materials[2] = boxMaterial3;
-  materials[3] = boxMaterial1;
-  materials[4] = boxMaterial2;
-  materials[5] = boxMaterial3;
-  
   //paint objects
   for(var line = 0; line < this.height; line++) {
     for(var row = 0; row < this.width; row++) {
       if (this.level.isBrick(line, row)) {
-        var box = new Box( graphicEngine.UNIT_SIZE, this.boxColor, materials);
+        var box = new Box( graphicEngine.UNIT_SIZE, this.boxColor, globalImagesLibrary.materials);
         this.level.store(box, line, row);
         graphicEngine.placeObject(box.getMesh(), line, 0, row);
       } 

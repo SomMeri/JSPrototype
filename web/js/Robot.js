@@ -29,10 +29,6 @@ var RobotGeometry = function (unit) {
   v( width_min, height_min, depth_max);
   v( width_min, height_max, depth_max);
 
-  var faceImage = new Image();
-  faceImage.src = '../textures/robot_head_rusted_2.PNG';
-  var faceTexture = new THREE.Texture( faceImage, new THREE.UVMapping());;
-  var faceMaterial = new THREE.MeshBasicMaterial( { map: faceTexture, opacity: 1 } );
   var headMaterial = new THREE.MeshLambertMaterial( { color: 0xA0A0A0, opacity: 1, shading: THREE.FlatShading } );
 
   //faces
@@ -61,12 +57,6 @@ var RobotGeometry = function (unit) {
   v( body_width_min, body_height_min, body_depth_max);
   v( body_width_min, body_height_max, body_depth_max);
 
-  var bodyImage = new Image();
-  //nice but booring
-  //bodyImage.src = '../textures/robot_body_metal_2.PNG';
-  bodyImage.src = '../textures/robot_body_scratched_2.PNG';
-  var bodyTexture = new THREE.Texture( bodyImage, new THREE.UVMapping());;
-  var bodyMaterial = new THREE.MeshBasicMaterial( { map: bodyTexture, opacity: 1 } );
   var bodyMaterial = new THREE.MeshLambertMaterial( { color: 0xA0A0A0, opacity: 1, shading: THREE.FlatShading } );
   var vo = 8;
 
@@ -96,10 +86,6 @@ var RobotGeometry = function (unit) {
   v( width_min, height_min, depth_max);
   v( width_min, height_max, depth_max);
 
-  var legsImage = new Image();
-  legsImage.src = '../textures/robot_wheels_3.PNG';
-  var legsTexture = new THREE.Texture( legsImage, new THREE.UVMapping());;
-  var legsMaterial = new THREE.MeshBasicMaterial( { map: legsTexture, opacity: 1 } );
   var legsMaterial = new THREE.MeshLambertMaterial( { color: 0x303030, opacity: 1, shading: THREE.FlatShading } );
   vo +=8;
 
@@ -129,12 +115,6 @@ var RobotGeometry = function (unit) {
   v( rh_width_min, rh_height_min, rh_depth_max);
   v( rh_width_min, rh_height_max, rh_depth_max);
 
-  var rhImage = new Image();
-  //nice but booring
-  //bodyImage.src = '../textures/robot_body_metal_2.PNG';
-  rhImage.src = '../textures/robot_head_rusted_2.PNG';
-  var rhTexture = new THREE.Texture( rhImage, new THREE.UVMapping());;
-  var rhMaterial = new THREE.MeshBasicMaterial( { map: rhTexture, opacity: 1 } );
   var rhMaterial = new THREE.MeshLambertMaterial( { color: 0x505050, opacity: 1, shading: THREE.FlatShading } );
   vo += 8;
 
