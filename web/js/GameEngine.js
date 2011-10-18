@@ -240,7 +240,7 @@ DirectionHelper.prototype.getRowOffset = function () {
 };
 
 
-var GameEngine = function ( _graphicEngine, _level, _updateStatsCallback ) {
+var GameEngine = function ( _graphicEngine, _updateStatsCallback ) {
   //configuration
   this.robotColor = 0x80DF1F;
   this.wallColor = 0xDF1F1F;
@@ -248,10 +248,12 @@ var GameEngine = function ( _graphicEngine, _level, _updateStatsCallback ) {
   
   //initialization
   this.graphicEngine = _graphicEngine;
-  this.originalLevel = _level;
+  this.originalLevel;
   this.endLevelGraphics = new EndLevelGraphics(graphicEngine.getRenderer());
   this.endLevelModifier = 1;
-  this.level = this.originalLevel.prototypeclone();
+  if (!this.originalLevel === undefined)
+    this.level = this.originalLevel.prototypeclone();
+  
   this.updateStatsCallback = _updateStatsCallback;
   
   this.robotDirection = new DirectionHelper();
@@ -383,10 +385,10 @@ GameEngine.prototype.handlePossibleEndgame = function () {
 };
 
 GameEngine.prototype.resetLevel = function (_level) {
-  if (!(typeof _level === 'undefined')) {
+  if (!(_level === undefined)) {
     this.originalLevel = _level;
   }
-  if (this.originalLevel === 'undefined') {
+  if (this.originalLevel === undefined) {
     return ;
   }
   

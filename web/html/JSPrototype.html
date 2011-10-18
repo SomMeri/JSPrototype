@@ -148,7 +148,7 @@ body {
 				//graphicEngine = new GraphicEngine(500, 100);
 			    var urdiv = document.getElementById("upperrow");
 				graphicEngine = new GraphicEngine(window.innerWidth, window.innerHeight - urdiv.offsetHeight - 20);
-				gameEngine = new GameEngine(graphicEngine, smallestLevel, refreshStats);
+				gameEngine = new GameEngine(graphicEngine, refreshStats);
 				renderer = graphicEngine.getRenderer();
 
 				onMouseDownPosition = new THREE.Vector2();
