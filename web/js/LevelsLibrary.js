@@ -1,6 +1,7 @@
 var LevelsLibrary = function () {
   this.names = new Array();
   this.levels = new Array();
+  //http://sokosolve.sourceforge.net/
   
   var endgameGraphicsTesting  = new Level(
       '1332  ',
@@ -9,14 +10,6 @@ var LevelsLibrary = function () {
       '1  554',
       '1.   4',
       '122224');
-
-//  var stillEasy  = new Level(
-//      '133334  ',
-//      '1 @  4  ',
-//      '1 $  4  ',
-//      '1 2  4',
-//      '1 .  4',
-//      '122224');
 
   var microbanS2L1  = new Level(
   '1332  ',
