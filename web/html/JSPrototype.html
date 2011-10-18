@@ -36,10 +36,29 @@ body {
 .gamecanvas {
 }
 
+#blanket {
+	background-color:#111;
+	opacity: 0.45;
+	filter:alpha(opacity=45);
+	position:absolute;
+	z-index: 9001;
+	top:0px;
+	left:0px;
+	width:100%;
+}
+#aboutDiv {
+	position:absolute;
+	background-color:#eeeeee;
+	width:390px;
+	height:100px;
+	z-index: 9002;
+	text-align:center
+}
 </style>
 </head>
 <body>
 	<script type="text/javascript" src="../js/Three.js"></script>
+	<script type="text/javascript" src="../js/csspopup.js"></script>
 	
 	<script type="text/javascript" src="../js/helvetiker_regular.typeface.js"></script>
 	
@@ -53,6 +72,18 @@ body {
 	<script type="text/javascript" src="../js/GameEngine.js"></script>
 	<script type="text/javascript" src="../js/GraphicEngine.js"></script>
 
+	<div id="blanket" style="display:none;"></div>
+	
+	<div id="aboutDiv" style="display:none;">
+		Sokoban 3D Prototype <br>
+		version 0.01<br>
+		<br>
+		Microban levels designed by <a href="http://users.bentonrea.com/%7Esasquatch/sokoban/index.html">David W. Skinner</a><br>
+		<br>
+		<a href="#" onclick="popup_popup('aboutDiv')">Close</a>
+	</div>
+
+
 	<div id="container">
 	<div id="upperrow">
 		<span class="gameoptions" > 
@@ -62,6 +93,10 @@ body {
 		<span class="leveloptions" > 
 			<strong>STEPS</strong>: <span id="stepsnum">0</span> | <a href="javascript:undo();">UNDO</a>
 		</span>
+		<span class="about" > 
+			<a href="#" onclick="popup_popup('aboutDiv')">About</a>
+		</span>
+		
 		<br>
 	</div>
 	<div id="homeofcanvas">
@@ -259,7 +294,6 @@ body {
 			  gameEngine.undoMove(unBlockGUI);
 			  graphicEngine.render();
 			}
-
 		</script>
 
 </body>
