@@ -4,10 +4,18 @@ var LevelsLibrary = function () {
   
   var endgameGraphicsTesting  = new Level(
       '1332  ',
-      '1  2  ',
-      '1  2  ',
+      '1@ 2  ',
+      '1$ 2  ',
       '1  554',
-      '1.$@ 4',
+      '1.   4',
+      '122224');
+
+  var stillEasy  = new Level(
+      '133334  ',
+      '1 @  4  ',
+      '1 $  4  ',
+      '1 2  4',
+      '1 .  4',
       '122224');
 
   var microbanS2L1  = new Level(
@@ -29,15 +37,6 @@ var LevelsLibrary = function () {
  '3 1 111',
  '3   3  ',
  '22222  ');
-
-  var microbanS1L9  = new Level(
- '11111 ',
- '2.  22',
- '2@$$ 3',
- '11   3',
- ' 22  3',
- '  11.3',
- '   223');
 
   var microbanS1L1  = new Level(
   '1111  ',
@@ -116,6 +115,15 @@ var LevelsLibrary = function () {
   '311   3 ',
   '  22222 ');
 
+  var microbanS1L9  = new Level(
+      '11111 ',
+      '2.  22',
+      '2@$$ 3',
+      '11   3',
+      ' 22  3',
+      '  11.3',
+      '   223');
+
   var microbanS1L10  = new Level(
   '      11111',
   '      2.  2',
@@ -166,8 +174,46 @@ var LevelsLibrary = function () {
       '# @  #     #       ',
       '############       ');
   
-  this.names.push('endgameGraphicsTesting');
+  this.names.push('Hello World!');
   this.levels.push(endgameGraphicsTesting);
+
+//  this.names.push('Still Easy ...');
+//  this.levels.push(stillEasy);
+  
+  this.names.push('Microban S1 L01 - The First Microban Set');
+  this.levels.push(microbanS1L1);
+
+  this.names.push('Microban S1 L02 - ......Its ');
+  this.levels.push(microbanS1L2);
+
+  this.names.push('Microban S1 L03 - .....Beauty ');
+  this.levels.push(microbanS1L3);
+
+  this.names.push('Microban S1 L04 - .......Is ');
+  this.levels.push(microbanS1L4);
+  
+  this.names.push('Microban S1 L05 - .......In ');
+  this.levels.push(microbanS1L5);
+  
+  this.names.push('Microban S1 L06 - ....Simplicity ');
+  this.levels.push(microbanS1L6);
+  
+  this.names.push('Microban S1 L07 - ...........');
+  this.levels.push(microbanS1L7);
+  
+  this.names.push('Microban S1 L08 - .......All ');
+  this.levels.push(microbanS1L8);
+  
+  this.names.push('Microban S1 L09 - .......Are ');
+  this.levels.push(microbanS1L9);
+  
+  this.names.push('Microban S1 L10 - .....Solvable ');
+  this.levels.push(microbanS1L10);
+  
+  //At least they claim so ... 
+  
+  this.names.push('Invisible Walls - Just Because I Can');
+  this.levels.push(wallLessLevel);
 
   this.names.push('Microban S2 L1');
   this.levels.push(microbanS2L1);
@@ -175,39 +221,6 @@ var LevelsLibrary = function () {
   this.names.push('Microban S2 L2');
   this.levels.push(microbanS2L3);
 
-  this.names.push('Microban S1 L9');
-  this.levels.push(microbanS1L9);
-  
-  this.names.push('Invisible Walls');
-  this.levels.push(wallLessLevel);
-
-  this.names.push('Microban S1 L1');
-  this.levels.push(microbanS1L1);
-
-  this.names.push('Microban S1 L2');
-  this.levels.push(microbanS1L2);
-
-  this.names.push('Microban S1 L3');
-  this.levels.push(microbanS1L3);
-
-  this.names.push('Microban S1 L4');
-  this.levels.push(microbanS1L4);
-  
-  this.names.push('Microban S1 L5');
-  this.levels.push(microbanS1L5);
-  
-  this.names.push('Microban S1 L6');
-  this.levels.push(microbanS1L6);
-  
-  this.names.push('Microban S1 L7');
-  this.levels.push(microbanS1L7);
-  
-  this.names.push('Microban S1 L8');
-  this.levels.push(microbanS1L8);
-  
-  this.names.push('Microban S1 L10');
-  this.levels.push(microbanS1L10);
-  
   this.names.push('The Real One');
   this.levels.push(realLevel);
 
