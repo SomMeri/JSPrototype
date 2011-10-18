@@ -153,7 +153,7 @@ body {
 			plane, cube, linesMaterial,
 			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
 			isMouseDown = false, onMouseDownPosition,
-			radious = 1600, theta = 230.5, onMouseDownTheta = 230.5, phi = 129.5, onMouseDownPhi = 129.5;
+			radious = 1600, theta = 206, onMouseDownTheta = 206, phi = 138, onMouseDownPhi = 138;
 			
 			var library = new LevelsLibrary();
 			var graphicEngine;
@@ -223,13 +223,13 @@ body {
 				if (GUIBlocked)
 				  return ;
 				
-				blockGUI();
-				
 				switch( event.keyCode ) {
-					case 37: gameEngine.turnLeft(unBlockGUI); break;
-					case 38: gameEngine.moveForward(unBlockGUI); break;
-					case 39: gameEngine.turnRight(unBlockGUI); break;
-					case 40: gameEngine.moveBackward(unBlockGUI); break;
+					case 37: blockGUI(); gameEngine.turnLeft(unBlockGUI); break;
+					case 38: blockGUI(); gameEngine.moveForward(unBlockGUI); break;
+					case 39: blockGUI(); gameEngine.turnRight(unBlockGUI); break;
+					case 40: blockGUI(); gameEngine.moveBackward(unBlockGUI); break;
+					
+					case 67: captureCamera(); break;
 				 }
 			}
 

@@ -34,8 +34,9 @@ EndLevelGraphics.prototype.initialize = function (storedObjects) {
   }
 };
 
-EndLevelGraphics.prototype.perform = function (storedObjects, modifier) {
+EndLevelGraphics.prototype.perform = function (modifier, graphicsEndCallback) {
   var objects = this.objects, xd = this.xd, yd = this.yd, zd = this.zd, xrd = this.xrd, zrd = this.zrd;
+  var callback = graphicsEndCallback;
   if (modifier===undefined)
     modifier = 1;
 
@@ -57,6 +58,9 @@ EndLevelGraphics.prototype.perform = function (storedObjects, modifier) {
   function cleanUp(){
     window.clearInterval(explosionTimer);
     window.clearInterval(cleanUpTimer);
+    
+    if (!(callback===undefined))
+      callback();
   };
 };
 
