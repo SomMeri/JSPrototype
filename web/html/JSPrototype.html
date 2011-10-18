@@ -125,7 +125,6 @@ body {
 		<span class="about" > 
 			<a href="#" onclick="popup_popup('aboutDiv', 'aboutBlanket')">About</a>
 		</span>
-		
 		<br>
 	</div>
 	<div id="homeofcanvas">
@@ -154,7 +153,7 @@ body {
 			plane, cube, linesMaterial,
 			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
 			isMouseDown = false, onMouseDownPosition,
-			radious = 1600, theta = 45, onMouseDownTheta = 45, phi = 60, onMouseDownPhi = 60;
+			radious = 1600, theta = 230.5, onMouseDownTheta = 230.5, phi = 129.5, onMouseDownPhi = 129.5;
 			
 			var library = new LevelsLibrary();
 			var graphicEngine;
@@ -310,6 +309,10 @@ body {
 				gameEngine.resetLevel();
 				graphicEngine.render();
 				unBlockGUI();
+			}
+			
+			function captureCamera() {
+			  alert('theta: ' + theta + ' phi: ' + phi )
 			}
 
 			function blockGUI() {

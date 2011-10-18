@@ -1,4 +1,5 @@
 var GraphicEngine = function(_canvasWidth, _canvasheight) {
+  this.radious = 1600;
   this.UNIT_SIZE = 50;
   this.HALF = 25;
   
@@ -35,9 +36,14 @@ var GraphicEngine = function(_canvasWidth, _canvasheight) {
 
   function initCamera() {
     camera = new THREE.Camera(40, window.innerWidth / window.innerHeight, 1, 10000);
-    camera.position.x = radious * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
-    camera.position.y = radious * Math.sin(phi * Math.PI / 360);
-    camera.position.z = radious * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+    camera.position.x = this.radious * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+    camera.position.y = this.radious * Math.sin(phi * Math.PI / 360);
+    camera.position.z = this.radious * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+
+//    camera.position.x = 776;
+//    camera.position.y = 1395;
+//    camera.position.z = -91;
+    
     camera.target.position.y = 200;
   }
 
@@ -341,9 +347,9 @@ GraphicEngine.prototype.continuosRotate = function(mesh, y_rotation, doneCallbac
  * @param phi
  */
 GraphicEngine.prototype.rotateView = function(theta, phi) {
-  var x = radious * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
-  var y = radious * Math.sin(phi * Math.PI / 360);
-  var z = radious * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+  var x = this.radious * Math.sin(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
+  var y = this.radious * Math.sin(phi * Math.PI / 360);
+  var z = this.radious * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
   if (y <= 0) {
     y = 1;
   }
