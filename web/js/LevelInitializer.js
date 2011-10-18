@@ -39,7 +39,6 @@ Initializer.prototype.initialize = function () {
   
   this.graphicEngine.clear();
   this.graphicEngine.setGeneralSize(this.height, this.width);
-  //TODO toto cele upratat, nech tie graf veci robi graphic engine
   
   this.createGridLines();
   this.graphicEngine.render();

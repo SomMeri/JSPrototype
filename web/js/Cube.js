@@ -187,7 +187,6 @@ var LongWall = function (unit, height, width, image) {
   this.geometry;
   this.mesh;
   
-  //TODO those repeats are surely wrong
   var wallTextureUp = new THREE.Texture( image, new THREE.UVMapping(), THREE.RepeatWrapping, THREE.RepeatWrapping);;
   wallTextureUp.repeat.x = height;
   wallTextureUp.repeat.y = 1;
