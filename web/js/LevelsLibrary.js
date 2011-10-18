@@ -1,7 +1,7 @@
 var LevelsLibrary = function () {
   this.names = new Array();
   this.levels = new Array();
-  //http://sokosolve.sourceforge.net/
+  //Microban levels under GPL are located here http://sokosolve.sourceforge.net/
   
   var endgameGraphicsTesting  = new Level(
       '1332  ',
