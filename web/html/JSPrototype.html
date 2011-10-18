@@ -36,7 +36,7 @@ body {
 .gamecanvas {
 }
 
-#blanket {
+#aboutBlanket {
 	background-color:#111;
 	opacity: 0.45;
 	filter:alpha(opacity=45);
@@ -52,7 +52,28 @@ body {
 	width:390px;
 	height:100px;
 	z-index: 9002;
-	text-align:center
+	text-align:center;
+}
+#endlevelBlanket {
+	background-color:#111;
+	opacity: 0.45;
+	filter:alpha(opacity=45);
+	position:absolute;
+	z-index: 9001;
+	top:0px;
+	left:0px;
+	width:100%;
+}
+#endlevelDiv {
+	position:absolute;
+	background-color:#eeeeee;
+	opacity: 0.8;
+	filter:alpha(opacity=8);
+	width:410px;
+	height:100px;
+	z-index: 9002;
+	text-align:center;
+	border: 5px solid black;
 }
 </style>
 </head>
@@ -70,15 +91,23 @@ body {
 	<script type="text/javascript" src="../js/GameEngine.js"></script>
 	<script type="text/javascript" src="../js/GraphicEngine.js"></script>
 
-	<div id="blanket" style="display:none;"></div>
-	
+	<div id="aboutBlanket" style="display:none;"></div>
 	<div id="aboutDiv" style="display:none;">
 		Sokoban 3D Prototype <br>
 		version 0.01<br>
 		<br>
 		Microban levels designed by <a href="http://users.bentonrea.com/%7Esasquatch/sokoban/index.html">David W. Skinner</a><br>
 		<br>
-		<a href="#" onclick="popup_popup('aboutDiv')">Close</a>
+		<a href="#" onclick="popup_popup('aboutDiv', 'aboutBlanket')">Close</a>
+	</div>
+
+	<div id="endlevelBlanket" style="display:none;"></div>
+	<div id="endlevelDiv" style="display:none;">
+		<strong>Bwahahaha!</strong> <br>
+		<br>
+		<strong>Congratulation. Please, <a href="javascript:nextLevel();">proceed to the next level</a>.</strong><br>
+		<br>
+		<strong><a href="#" onclick="popup_close('endlevelDiv')">Close</a></strong>
 	</div>
 
 
@@ -92,7 +121,7 @@ body {
 			<strong>STEPS</strong>: <span id="stepsnum">0</span> | <a href="javascript:undo();">UNDO</a>
 		</span>
 		<span class="about" > 
-			<a href="#" onclick="popup_popup('aboutDiv')">About</a>
+			<a href="#" onclick="popup_popup('aboutDiv', 'aboutBlanket')">About</a>
 		</span>
 		
 		<br>
@@ -145,10 +174,16 @@ body {
 			  
 			  homeofcanvas = document.getElementById("homeofcanvas");
 				
-				//graphicEngine = new GraphicEngine(500, 100);
+			    //find upper row
 			    var urdiv = document.getElementById("upperrow");
+			    
+			    //end level pop up location
+			    //var endlevelDiv = document.getElementById("endlevelDiv");
+			    //endlevelDiv.style.top = '20px';
+			    
+			    //initialize graphic engine
 				graphicEngine = new GraphicEngine(window.innerWidth, window.innerHeight - urdiv.offsetHeight - 20);
-				gameEngine = new GameEngine(graphicEngine, refreshStats);
+				gameEngine = new GameEngine(graphicEngine, refreshStats, levelDoneCallback);
 				renderer = graphicEngine.getRenderer();
 
 				onMouseDownPosition = new THREE.Vector2();
@@ -164,6 +199,10 @@ body {
 	  			changeLevel(levelChooser);
 			}
 
+			function levelDoneCallback() {
+			  popup_show('endlevelDiv');
+			}
+			
 			function refreshStats() {
 			  if (!(typeof gameEngine === 'undefined')) {
 				  var html = document.getElementById("stepsnum");
@@ -244,6 +283,7 @@ body {
 			}
 	  	
 	  		function changeLevel(levelChooser) {
+	  		  popup_close('endlevelDiv');
 	  		  var levelId = levelChooser.options[levelChooser.selectedIndex].value;
 	  		  gameEngine.resetLevel(library.levels[levelId]);
 			  unBlockGUI();
@@ -265,6 +305,7 @@ body {
 				if ( !confirm( 'Are you sure?' ) ) {
 					return ;
 				}
+  		  		popup_close('endlevelDiv');
 				gameEngine.resetLevel();
 				graphicEngine.render();
 				unBlockGUI();

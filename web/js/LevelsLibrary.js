@@ -2,6 +2,14 @@ var LevelsLibrary = function () {
   this.names = new Array();
   this.levels = new Array();
   
+  var endgameGraphicsTesting  = new Level(
+      '1332  ',
+      '1  2  ',
+      '1  2  ',
+      '1  554',
+      '1.$@ 4',
+      '122224');
+
   var microbanS2L1  = new Level(
   '1332  ',
   '1  2  ',
@@ -157,6 +165,9 @@ var LevelsLibrary = function () {
       '#    #$    ########',
       '# @  #     #       ',
       '############       ');
+  
+  this.names.push('endgameGraphicsTesting');
+  this.levels.push(endgameGraphicsTesting);
 
   this.names.push('Microban S2 L1');
   this.levels.push(microbanS2L1);

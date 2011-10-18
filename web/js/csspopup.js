@@ -1,9 +1,18 @@
 function popup_toggle(div_id) {
+  if (div_id === undefined)
+    return ;
   var el = document.getElementById(div_id);
   if ( el.style.display == 'none' ) { el.style.display = 'block';}
   else {el.style.display = 'none';}
 }
-function popup_blanket_size(popUpDivVar) {
+function popup_on(div_id) {
+  if (div_id === undefined)
+    return false;
+  var el = document.getElementById(div_id);
+  if ( el.style.display == 'none' ) { return false;}
+  else {return true;}
+}
+function popup_blanket_size(popUpDivVar, blanketId) {
   if (typeof window.innerWidth != 'undefined') {
     viewportheight = window.innerHeight;
   } else {
@@ -18,8 +27,10 @@ function popup_blanket_size(popUpDivVar) {
       blanket_height = document.body.parentNode.scrollHeight;
     }
   }
-  var blanket = document.getElementById('blanket');
-  blanket.style.height = blanket_height + 'px';
+  if (!(blanketId === undefined)) {
+    var blanket = document.getElementById(blanketId);
+    blanket.style.height = blanket_height + 'px';
+  }
   var popUpDiv = document.getElementById(popUpDivVar);
   popUpDiv_height=blanket_height/2-150;//150 is half popup's height
   popUpDiv.style.top = popUpDiv_height + 'px';
@@ -43,9 +54,17 @@ function popup_window_pos(popUpDivVar) {
   window_width=window_width/2-150;//150 is half popup's width
   popUpDiv.style.left = window_width + 'px';
 }
-function popup_popup(windowname) {
-  popup_blanket_size(windowname);
+function popup_popup(windowname, blanketId) {
+  popup_blanket_size(windowname, blanketId);
   popup_window_pos(windowname);
-  popup_toggle('blanket');
+  popup_toggle(blanketId);
   popup_toggle(windowname);   
+}
+function popup_show(windowname, blanketId) {
+  if (!popup_on(windowname))
+    popup_popup(windowname, blanketId);
+}
+function popup_close(windowname, blanketId) {
+  if (popup_on(windowname))
+    popup_popup(windowname, blanketId);
 }

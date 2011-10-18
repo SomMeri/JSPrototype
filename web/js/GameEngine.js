@@ -240,7 +240,7 @@ DirectionHelper.prototype.getRowOffset = function () {
 };
 
 
-var GameEngine = function ( _graphicEngine, _updateStatsCallback ) {
+var GameEngine = function ( _graphicEngine, _updateStatsCallback, _levelDoneCallback ) {
   //configuration
   this.robotColor = 0x80DF1F;
   this.wallColor = 0xDF1F1F;
@@ -255,6 +255,7 @@ var GameEngine = function ( _graphicEngine, _updateStatsCallback ) {
     this.level = this.originalLevel.prototypeclone();
   
   this.updateStatsCallback = _updateStatsCallback;
+  this.levelDoneCallback = _levelDoneCallback;
   
   this.robotDirection = new DirectionHelper();
   this.robot;
@@ -378,6 +379,7 @@ GameEngine.prototype.turnRight = function (doneCallback) {
 GameEngine.prototype.handlePossibleEndgame = function () {
   if (0 == this.level.bricklessDestinations()) {
     this.levelOver = true;
+    this.levelDoneCallback();
     this.endLevelGraphics.initialize(this.level.allStoredObjects(), this.endLevelModifier);
     this.endLevelGraphics.perform();
     this.endLevelModifier = this.endLevelModifier * -1;
