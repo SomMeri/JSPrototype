@@ -33,6 +33,14 @@ body {
 	text-align: right;
 }
 
+.about {
+	color: #444; 
+	background-color: #fff; 
+	border-bottom: 1px solid #ddd; 
+	padding: 8px 10px; 
+	text-align: right;
+}
+
 .gamecanvas {
 }
 
@@ -53,16 +61,6 @@ body {
 	height:150px;
 	z-index: 9002;
 	text-align:center;
-}
-#endlevelBlanket {
-	background-color:#111;
-	opacity: 0.45;
-	filter:alpha(opacity=45);
-	position:absolute;
-	z-index: 9001;
-	top:0px;
-	left:0px;
-	width:100%;
 }
 #endlevelDiv {
 	position:absolute;
@@ -103,7 +101,6 @@ body {
 		<a href="#" onclick="popup_popup('aboutDiv', 'aboutBlanket')">Close</a>
 	</div>
 
-	<div id="endlevelBlanket" style="display:none;"></div>
 	<div id="endlevelDiv" style="display:none;">
 		<strong>Bwahahaha!</strong> <br>
 		<br>
@@ -123,7 +120,7 @@ body {
 			<strong>STEPS</strong>: <span id="stepsnum">0</span> | <a href="javascript:undo();">UNDO</a>
 		</span>
 		<span class="about" > 
-			<a href="#" onclick="popup_popup('aboutDiv', 'aboutBlanket')">About</a>
+			<a href="javascript:popup_popup('aboutDiv', 'aboutBlanket');">ABOUT</a>
 		</span>
 		<br>
 	</div>
