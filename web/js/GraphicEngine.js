@@ -217,8 +217,11 @@ GraphicEngine.prototype.offsetObject = function(mesh, x, y, z) {
 
 GraphicEngine.prototype.continuousOffsetObjects = function(meshes, x, y, z, doneCallback) {
   var offset = new THREE.Vector3(x, y, z).multiplyScalar(this.UNIT_SIZE);
-  var refreshRate = 1000/240;
-  var step = this.UNIT_SIZE / refreshRate;
+  //var refreshRate = 1000/240;
+  //var step = this.UNIT_SIZE / refreshRate; //12
+  var refreshRate = 40;
+  var step = 12;
+  var neededLoops = this.UNIT_SIZE / step;
   var modifier = new THREE.Vector3(x, y, z).multiplyScalar(step);
   
   var finalPositions = new Array();
@@ -255,7 +258,7 @@ GraphicEngine.prototype.continuousOffsetObjects = function(meshes, x, y, z, done
   }
   
   function movementDone() {
-    return looped >= refreshRate;
+    return looped >= neededLoops;
   }
 };
 
@@ -271,8 +274,6 @@ GraphicEngine.prototype.continuosRotate = function(mesh, y_rotation, doneCallbac
 
   var difference = shortestDifference(mesh.rotation.y, y_rotation);
   var refreshRate = 40;
-  //var refreshRate = 1000/500;
-  //var modifier =  difference / refreshRate; 0.28
   var modifier = 0.28;
   if (difference<0)
     modifier = modifier*-1;
