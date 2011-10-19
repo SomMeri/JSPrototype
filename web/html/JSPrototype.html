@@ -148,10 +148,8 @@ body {
 	</script>
 	
 	<script type="text/javascript">
-
 			var homeofcanvas, canvas, interval, GUIBlocked = false,
 			renderer,
-			plane, cube, linesMaterial,
 			isMouseDown = false, onMouseDownPosition,
 			radious = 1600, theta = 206, onMouseDownTheta = 206, phi = 138, onMouseDownPhi = 138;
 			
@@ -207,11 +205,6 @@ body {
 			function initEventListeners() {
 				document.addEventListener( 'keydown', onDocumentKeyDown, false );
 
-			  /*
-				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-				document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-				*/
 				canvas.onmousemove = onDocumentMouseMove;
 				canvas.onmousedown = onDocumentMouseDown;
 				canvas.onmouseup = onDocumentMouseUp;

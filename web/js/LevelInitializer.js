@@ -2,11 +2,11 @@ var ImagesLibrary = function() {
   this.wallImage = new Image();
   this.wallImage.src = '../textures/SokobanWallTexture.PNG';
 
-  var boxTexture1 = THREE.ImageUtils.loadTexture("../textures/boxtest.PNG");
+  var boxTexture1 = THREE.ImageUtils.loadTexture("../textures/SokobanBrick1.PNG");
   var boxMaterial1 = new THREE.MeshBasicMaterial( { map: boxTexture1, opacity: 1, shading: THREE.FlatShading } );
-  var boxTexture2 = THREE.ImageUtils.loadTexture("../textures/boxtest2.JPG");
+  var boxTexture2 = THREE.ImageUtils.loadTexture("../textures/SokobanBrick2.JPG");
   var boxMaterial2 = new THREE.MeshBasicMaterial( { map: boxTexture2, opacity: 1, shading: THREE.FlatShading } );
-  var boxTexture3 = THREE.ImageUtils.loadTexture("../textures/boxtest3.JPG");
+  var boxTexture3 = THREE.ImageUtils.loadTexture("../textures/SokobanBrick3.JPG");
   var boxMaterial3 = new THREE.MeshBasicMaterial( { map: boxTexture3, opacity: 1, shading: THREE.FlatShading } );
 
   this.materials = new Array();
