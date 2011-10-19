@@ -119,7 +119,7 @@ body {
 	<div id="container">
 	<div id="upperrow">
 		<div class="gameoptions" > 
-			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select style="z-index: 10;" onkeydown="keydownInLevelChooser(event)" onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a> | <a href="javascript:nextLevel();">NEXT LEVEL</a>
+			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a> | <a href="javascript:nextLevel();">NEXT LEVEL</a>
 		</div>
 		<div class="leveloptions" > 
 			<strong>STEPS</strong>: <span id="stepsnum">0</span> | <a href="javascript:undo();">UNDO (Backspace)</a>
@@ -129,7 +129,7 @@ body {
 		</div>
 		<br>
 	</div>
-	<div id="homeofcanvas"  style="z-index: 1;" >
+	<div id="homeofcanvas" >
 	</div>
 	</div>
 	<script type="text/javascript">
@@ -145,9 +145,6 @@ body {
 	      }catch(error) {
 	        levelChooser.add(option); // IE only
 	      }
-	  	}
-	  	
-	  	function keydownInLevelChooser(event) {
 	  	}
 	</script>
 	
