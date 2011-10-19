@@ -217,8 +217,6 @@ GraphicEngine.prototype.offsetObject = function(mesh, x, y, z) {
 
 GraphicEngine.prototype.continuousOffsetObjects = function(meshes, x, y, z, doneCallback) {
   var offset = new THREE.Vector3(x, y, z).multiplyScalar(this.UNIT_SIZE);
-  //var refreshRate = 1000/240;
-  //var step = this.UNIT_SIZE / refreshRate; //12
   var refreshRate = 40;
   var step = 12;
   var neededLoops = this.UNIT_SIZE / step;

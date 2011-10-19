@@ -40,7 +40,7 @@ EndLevelGraphics.prototype.perform = function (modifier, graphicsEndCallback) {
   if (modifier===undefined)
     modifier = 1;
 
-  var explosionTimer = window.setInterval(loop, 1000/60);
+  var explosionTimer = window.setInterval(loop, 30);
   var cleanUpTimer = window.setInterval(cleanUp, 4000);
    
   function loop(){
