@@ -119,7 +119,7 @@ body {
 	<div id="container">
 	<div id="upperrow">
 		<div class="gameoptions" > 
-			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select style="z-index: 10;" onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a> | <a href="javascript:nextLevel();">NEXT LEVEL</a>
+			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select style="z-index: 10;" onkeydown="keydownInLevelChooser(event)" onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a> | <a href="javascript:nextLevel();">NEXT LEVEL</a>
 		</div>
 		<div class="leveloptions" > 
 			<strong>STEPS</strong>: <span id="stepsnum">0</span> | <a href="javascript:undo();">UNDO</a>
@@ -145,6 +145,9 @@ body {
 	      }catch(error) {
 	        levelChooser.add(option); // IE only
 	      }
+	  	}
+	  	
+	  	function keydownInLevelChooser(event) {
 	  	}
 	</script>
 	
@@ -192,7 +195,6 @@ body {
 				
 				initEventListeners();
 
-				var levelChooser = document.getElementById("chooseLevel");
 	  			levelChooser.selectedIndex = 0;
 	  			changeLevel(levelChooser);
 			}
@@ -210,7 +212,6 @@ body {
 
 			function initEventListeners() {
 				document.addEventListener( 'keydown', onDocumentKeyDown, false );
-				document.addEventListener( 'keyup', onDocumentKeyUp, false );
 
 			  /*
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
@@ -226,6 +227,9 @@ body {
 				if (GUIBlocked)
 				  return ;
 				
+				event.preventDefault();
+				levelChooser.blur();
+				
 				switch( event.keyCode ) {
 					case 37: blockGUI(); gameEngine.turnLeft(unBlockGUI); break;
 					case 38: blockGUI(); gameEngine.moveForward(unBlockGUI); break;
@@ -234,9 +238,6 @@ body {
 					
 					case 67: captureCamera(); break;
 				 }
-			}
-
-			function onDocumentKeyUp( event ) {
 			}
 
 			function onDocumentMouseDown( event ) {

@@ -1,7 +1,8 @@
 //TODO kamera musi startovat z krajsieho uhla
 //TODO different speeds
 //TODO explorer
-//TODO chrome focus
+//TODO chrome select focus
+//TODO keep selected level in some variable, not in select box
 function set ()
   {
     var result = {};

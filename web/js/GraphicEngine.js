@@ -40,10 +40,6 @@ var GraphicEngine = function(_canvasWidth, _canvasheight) {
     camera.position.y = this.radious * Math.sin(phi * Math.PI / 360);
     camera.position.z = this.radious * Math.cos(theta * Math.PI / 360) * Math.cos(phi * Math.PI / 360);
 
-//    camera.position.x = 776;
-//    camera.position.y = 1395;
-//    camera.position.z = -91;
-    
     camera.target.position.y = 200;
   }
 
