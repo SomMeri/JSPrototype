@@ -122,7 +122,7 @@ body {
 			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select style="z-index: 10;" onkeydown="keydownInLevelChooser(event)" onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a> | <a href="javascript:nextLevel();">NEXT LEVEL</a>
 		</div>
 		<div class="leveloptions" > 
-			<strong>STEPS</strong>: <span id="stepsnum">0</span> | <a href="javascript:undo();">UNDO</a>
+			<strong>STEPS</strong>: <span id="stepsnum">0</span> | <a href="javascript:undo();">UNDO (Backspace)</a>
 		</div>
 		<div class="about" > 
 			<a href="javascript:popup_popup('aboutDiv', 'aboutBlanket');">ABOUT</a>
@@ -236,6 +236,7 @@ body {
 					case 40: event.preventDefault(); blockGUI(); gameEngine.moveBackward(unBlockGUI); break;
 					
 					case 67: captureCamera(); break;
+					case  8: event.preventDefault(); undo(); break;
 				 }
 			}
 
