@@ -1,8 +1,9 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-<title>JSPrototype</title>
+<title>JSSokoban 3D</title>
 <meta charset="utf-8">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
 <style type="text/css">
 body {
 	font-family: Monospace;
@@ -115,11 +116,10 @@ body {
 		<strong><a href="javascript:popup_close('endlevelDiv')">Close</a></strong>
 	</div>
 
-
 	<div id="container">
 	<div id="upperrow">
 		<div class="gameoptions" > 
-			<strong>MOUSE DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select style="z-index: 10;" onkeydown="keydownInLevelChooser(event)" onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a> | <a href="javascript:nextLevel();">NEXT LEVEL</a>
+			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a> | <a href="javascript:nextLevel();">NEXT LEVEL</a>
 		</div>
 		<div class="leveloptions" > 
 			<strong>STEPS</strong>: <span id="stepsnum">0</span> | <a href="javascript:undo();">UNDO (Backspace)</a>
@@ -129,7 +129,7 @@ body {
 		</div>
 		<br>
 	</div>
-	<div id="homeofcanvas"  style="z-index: 1;" >
+	<div id="homeofcanvas" >
 	</div>
 	</div>
 	<script type="text/javascript">
@@ -146,21 +146,14 @@ body {
 	        levelChooser.add(option); // IE only
 	      }
 	  	}
-	  	
-	  	function keydownInLevelChooser(event) {
-	  	}
 	</script>
 	
 	<script type="text/javascript">
-
 			var homeofcanvas, canvas, interval, GUIBlocked = false,
 			renderer,
-			plane, cube, linesMaterial,
-			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
 			isMouseDown = false, onMouseDownPosition,
 			radious = 1600, theta = 206, onMouseDownTheta = 206, phi = 138, onMouseDownPhi = 138;
 			
-			var library = new LevelsLibrary();
 			var graphicEngine;
 			var gameEngine;
 
@@ -213,11 +206,6 @@ body {
 			function initEventListeners() {
 				document.addEventListener( 'keydown', onDocumentKeyDown, false );
 
-			  /*
-				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-				document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-				*/
 				canvas.onmousemove = onDocumentMouseMove;
 				canvas.onmousedown = onDocumentMouseDown;
 				canvas.onmouseup = onDocumentMouseUp;
@@ -339,3 +327,4 @@ body {
 
 </body>
 </html>
+
