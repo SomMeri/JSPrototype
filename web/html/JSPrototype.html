@@ -15,6 +15,7 @@ body {
 #upperrow {
 	top: 5px;
 	width: 100%;
+	display: inline;
 }
 
 .gameoptions {
@@ -23,6 +24,7 @@ body {
 	border-bottom: 1px solid #ddd; 
 	padding: 8px 10px; 
 	text-align: left;
+	display: inline;
 }
 
 .leveloptions {
@@ -31,6 +33,7 @@ body {
 	border-bottom: 1px solid #ddd; 
 	padding: 8px 10px; 
 	text-align: right;
+	display: inline;
 }
 
 .about {
@@ -39,6 +42,8 @@ body {
 	border-bottom: 1px solid #ddd; 
 	padding: 8px 10px; 
 	text-align: right;
+	display: inline;
+	float: right;
 }
 
 .gamecanvas {
@@ -61,6 +66,7 @@ body {
 	height:150px;
 	z-index: 9002;
 	text-align:center;
+	border: black 1px solid;
 }
 #endlevelDiv {
 	position:absolute;
@@ -112,19 +118,18 @@ body {
 
 	<div id="container">
 	<div id="upperrow">
-		<span class="gameoptions" > 
-			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a> | <a href="javascript:nextLevel();">NEXT LEVEL</a>
-		</span>
-		<span> &nbsp; </span>
-		<span class="leveloptions" > 
+		<div class="gameoptions" > 
+			<strong>DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select style="z-index: 10;" onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a> | <a href="javascript:nextLevel();">NEXT LEVEL</a>
+		</div>
+		<div class="leveloptions" > 
 			<strong>STEPS</strong>: <span id="stepsnum">0</span> | <a href="javascript:undo();">UNDO</a>
-		</span>
-		<span class="about" > 
+		</div>
+		<div class="about" > 
 			<a href="javascript:popup_popup('aboutDiv', 'aboutBlanket');">ABOUT</a>
-		</span>
+		</div>
 		<br>
 	</div>
-	<div id="homeofcanvas">
+	<div id="homeofcanvas"  style="z-index: 1;" >
 	</div>
 	</div>
 	<script type="text/javascript">
@@ -145,7 +150,7 @@ body {
 	
 	<script type="text/javascript">
 
-			var homeofcanvas, interval, GUIBlocked = false,
+			var homeofcanvas, canvas, interval, GUIBlocked = false,
 			renderer,
 			plane, cube, linesMaterial,
 			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
@@ -175,19 +180,15 @@ body {
 			    //find upper row
 			    var urdiv = document.getElementById("upperrow");
 			    
-			    //end level pop up location
-			    //var endlevelDiv = document.getElementById("endlevelDiv");
-			    //endlevelDiv.style.top = '20px';
-			    
 			    //initialize graphic engine
 				graphicEngine = new GraphicEngine(window.innerWidth, window.innerHeight - urdiv.offsetHeight - 20);
 				gameEngine = new GameEngine(graphicEngine, refreshStats, levelDoneCallback);
 				renderer = graphicEngine.getRenderer();
 
 				onMouseDownPosition = new THREE.Vector2();
-				var canvas = renderer.domElement;
+				canvas = renderer.domElement;
 				canvas.className += "gamecanvas";
-				homeofcanvas.appendChild(renderer.domElement);
+				homeofcanvas.appendChild(canvas);
 				
 				initEventListeners();
 
@@ -211,9 +212,14 @@ body {
 				document.addEventListener( 'keydown', onDocumentKeyDown, false );
 				document.addEventListener( 'keyup', onDocumentKeyUp, false );
 
+			  /*
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 				document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+				*/
+				canvas.onmousemove = onDocumentMouseMove;
+				canvas.onmousedown = onDocumentMouseDown;
+				canvas.onmouseup = onDocumentMouseUp;
 			}
 			
 			function onDocumentKeyDown( event ) {

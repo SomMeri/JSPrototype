@@ -1,4 +1,7 @@
 //TODO kamera musi startovat z krajsieho uhla
+//TODO different speeds
+//TODO explorer
+//TODO chrome focus
 function set ()
   {
     var result = {};
@@ -377,8 +380,9 @@ GameEngine.prototype.turnRight = function (doneCallback) {
 GameEngine.prototype.handlePossibleEndgame = function () {
   if (0 == this.level.bricklessDestinations()) {
     this.levelOver = true;
+    this.levelDoneCallback();
     this.endLevelGraphics.initialize(this.level.allStoredObjects(), this.endLevelModifier);
-    this.endLevelGraphics.perform(1, this.levelDoneCallback);
+    this.endLevelGraphics.perform(1);
     this.endLevelModifier = this.endLevelModifier * -1;
   }
 };
