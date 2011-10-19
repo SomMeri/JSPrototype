@@ -270,8 +270,9 @@ GraphicEngine.prototype.continuosRotate = function(mesh, y_rotation, doneCallbac
   mesh.rotation.y = normalizeArc(mesh.rotation.y);
 
   var difference = shortestDifference(mesh.rotation.y, y_rotation);
-  var refreshRate = 1000/180;
-  var modifier =  difference / refreshRate;
+  //var refreshRate = 1000/180;
+  var refreshRate = 1000/500;
+  var modifier =  difference / 4*refreshRate;
   
   //normalize rotations again
   if (modifier > 0 && y_rotation < mesh.rotation.y)

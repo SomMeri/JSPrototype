@@ -227,14 +227,13 @@ body {
 				if (GUIBlocked)
 				  return ;
 				
-				event.preventDefault();
 				levelChooser.blur();
 				
 				switch( event.keyCode ) {
-					case 37: blockGUI(); gameEngine.turnLeft(unBlockGUI); break;
-					case 38: blockGUI(); gameEngine.moveForward(unBlockGUI); break;
-					case 39: blockGUI(); gameEngine.turnRight(unBlockGUI); break;
-					case 40: blockGUI(); gameEngine.moveBackward(unBlockGUI); break;
+					case 37: event.preventDefault(); blockGUI(); gameEngine.turnLeft(unBlockGUI); break;
+					case 38: event.preventDefault(); blockGUI(); gameEngine.moveForward(unBlockGUI); break;
+					case 39: event.preventDefault(); blockGUI(); gameEngine.turnRight(unBlockGUI); break;
+					case 40: event.preventDefault(); blockGUI(); gameEngine.moveBackward(unBlockGUI); break;
 					
 					case 67: captureCamera(); break;
 				 }
