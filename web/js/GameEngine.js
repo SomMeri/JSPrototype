@@ -1,6 +1,5 @@
 //TODO kamera musi startovat z krajsieho uhla
 //TODO help screen
-//TODO different speeds
 //TODO explorer
 function set ()
   {
