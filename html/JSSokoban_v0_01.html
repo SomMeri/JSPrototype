@@ -1,0 +1,341 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>JSPrototype</title>
+<meta charset="utf-8">
+<style type="text/css">
+body {
+	font-family: Monospace;
+	font-size: 12px;
+	background-color: #f0f0f0;
+	margin: 0px;
+	overflow: hidden;
+}
+
+#upperrow {
+	top: 5px;
+	width: 100%;
+	display: inline;
+}
+
+.gameoptions {
+	color: #444; 
+	background-color: #fff; 
+	border-bottom: 1px solid #ddd; 
+	padding: 8px 10px; 
+	text-align: left;
+	display: inline;
+}
+
+.leveloptions {
+	color: #444; 
+	background-color: #fff; 
+	border-bottom: 1px solid #ddd; 
+	padding: 8px 10px; 
+	text-align: right;
+	display: inline;
+}
+
+.about {
+	color: #444; 
+	background-color: #fff; 
+	border-bottom: 1px solid #ddd; 
+	padding: 8px 10px; 
+	text-align: right;
+	display: inline;
+	float: right;
+}
+
+.gamecanvas {
+}
+
+#aboutBlanket {
+	background-color:#111;
+	opacity: 0.45;
+	filter:alpha(opacity=45);
+	position:absolute;
+	z-index: 9001;
+	top:0px;
+	left:0px;
+	width:100%;
+}
+#aboutDiv {
+	position:absolute;
+	background-color:#eeeeee;
+	width:390px;
+	height:150px;
+	z-index: 9002;
+	text-align:center;
+	border: black 1px solid;
+}
+#endlevelDiv {
+	position:absolute;
+	background-color:#eeeeee;
+	opacity: 0.8;
+	filter:alpha(opacity=8);
+	width:410px;
+	height:100px;
+	z-index: 9002;
+	text-align:center;
+	border: 5px solid black;
+}
+</style>
+</head>
+<body>
+	<script type="text/javascript" src="../js/Three.js"></script>
+	<script type="text/javascript" src="../js/csspopup.js"></script>
+	
+	<script type="text/javascript" src="../js/EndLevelGraphics.js"></script>
+	<script type="text/javascript" src="../js/Cube.js"></script>
+	<script type="text/javascript" src="../js/Robot.js"></script>
+	<script type="text/javascript" src="../js/Plane.js"></script>
+	<script type="text/javascript" src="../js/LevelsLibrary.js"></script>
+	<script type="text/javascript" src="../js/LevelInitializer.js"></script>
+	<script type="text/javascript" src="../js/GameEngine.js"></script>
+	<script type="text/javascript" src="../js/GraphicEngine.js"></script>
+
+	<div id="aboutBlanket" style="display:none;"></div>
+	<div id="aboutDiv" style="display:none;">
+		Sokoban 3D Prototype <br>
+		version 0.01<br>
+		<br>
+		Written by <a href="http://meri-stuff.blogspot.com/">Meri</a><br>
+		Using 3D Engine <a href="https://github.com/mrdoob/three.js">Three.js</a><br>
+		<br>
+		Microban levels designed by <a href="http://users.bentonrea.com/%7Esasquatch/sokoban/index.html">David W. Skinner</a><br>
+		<br>
+		<a href="javascript:popup_popup('aboutDiv', 'aboutBlanket')">Close</a>
+	</div>
+
+	<div id="endlevelDiv" style="display:none;">
+		<strong>Bwahahaha!</strong> <br>
+		<br>
+		<strong>Congratulation. Please, <a href="javascript:nextLevel();">proceed to the next level</a>.</strong><br>
+		<br>
+		<strong><a href="javascript:popup_close('endlevelDiv')">Close</a></strong>
+	</div>
+
+
+	<div id="container">
+	<div id="upperrow">
+		<div class="gameoptions" > 
+			<strong>MOUSE DRAG</strong>: ROTATE | <strong>SELECT LEVEL</strong>: <select style="z-index: 10;" onkeydown="keydownInLevelChooser(event)" onChange="changeLevel(this)" name="chooseLevel" id="chooseLevel"></select> | <a href="javascript:clear();">RESET LEVEL</a> | <a href="javascript:nextLevel();">NEXT LEVEL</a>
+		</div>
+		<div class="leveloptions" > 
+			<strong>STEPS</strong>: <span id="stepsnum">0</span> | <a href="javascript:undo();">UNDO (Backspace)</a>
+		</div>
+		<div class="about" > 
+			<a href="javascript:popup_popup('aboutDiv', 'aboutBlanket');">ABOUT</a>
+		</div>
+		<br>
+	</div>
+	<div id="homeofcanvas"  style="z-index: 1;" >
+	</div>
+	</div>
+	<script type="text/javascript">
+		var levelChooser = document.getElementById("chooseLevel");
+		var library = new LevelsLibrary();
+		
+	  	for(var level = 0; level < library.names.length; level++) {
+	  	  var option = document.createElement("option");
+	      option.text = library.names[level];
+	      option.value = level;
+	      try {
+	        levelChooser.add(option, null); //Standard
+	      }catch(error) {
+	        levelChooser.add(option); // IE only
+	      }
+	  	}
+	  	
+	  	function keydownInLevelChooser(event) {
+	  	}
+	</script>
+	
+	<script type="text/javascript">
+
+			var homeofcanvas, canvas, interval, GUIBlocked = false,
+			renderer,
+			plane, cube, linesMaterial,
+			color = 0, colors = [ 0xDF1F1F, 0xDFAF1F, 0x80DF1F, 0x1FDF50, 0x1FDFDF, 0x1F4FDF, 0x7F1FDF, 0xDF1FAF, 0xEFEFEF, 0x303030 ],
+			isMouseDown = false, onMouseDownPosition,
+			radious = 1600, theta = 206, onMouseDownTheta = 206, phi = 138, onMouseDownPhi = 138;
+			
+			var library = new LevelsLibrary();
+			var graphicEngine;
+			var gameEngine;
+
+			init();
+
+			function init() {
+			  //lets be courageous
+			  Object.prototype.prototypeclone = function() {
+			    var newObj = (this instanceof Array) ? [] : {};
+			    for (i in this) {
+			      if (i == 'prototypeclone') continue;
+			      if (this[i] && typeof this[i] == "object") {
+			        newObj[i] = this[i].prototypeclone();
+			      } else newObj[i] = this[i]
+			    } return newObj;
+			  };
+			  
+			  homeofcanvas = document.getElementById("homeofcanvas");
+				
+			    //find upper row
+			    var urdiv = document.getElementById("upperrow");
+			    
+			    //initialize graphic engine
+				graphicEngine = new GraphicEngine(window.innerWidth, window.innerHeight - urdiv.offsetHeight - 20);
+				gameEngine = new GameEngine(graphicEngine, refreshStats, levelDoneCallback);
+				renderer = graphicEngine.getRenderer();
+
+				onMouseDownPosition = new THREE.Vector2();
+				canvas = renderer.domElement;
+				canvas.className += "gamecanvas";
+				homeofcanvas.appendChild(canvas);
+				
+				initEventListeners();
+
+	  			levelChooser.selectedIndex = 0;
+	  			changeLevel(levelChooser);
+			}
+
+			function levelDoneCallback() {
+			  popup_show('endlevelDiv');
+			}
+			
+			function refreshStats() {
+			  if (!(typeof gameEngine === 'undefined')) {
+				  var html = document.getElementById("stepsnum");
+				  html.innerHTML = gameEngine.stepsSoFar();
+			  }
+			}
+
+			function initEventListeners() {
+				document.addEventListener( 'keydown', onDocumentKeyDown, false );
+
+			  /*
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+				*/
+				canvas.onmousemove = onDocumentMouseMove;
+				canvas.onmousedown = onDocumentMouseDown;
+				canvas.onmouseup = onDocumentMouseUp;
+			}
+			
+			function onDocumentKeyDown( event ) {
+				if (GUIBlocked)
+				  return ;
+				
+				levelChooser.blur();
+				
+				switch( event.keyCode ) {
+					case 37: event.preventDefault(); blockGUI(); gameEngine.turnLeft(unBlockGUI); break;
+					case 38: event.preventDefault(); blockGUI(); gameEngine.moveForward(unBlockGUI); break;
+					case 39: event.preventDefault(); blockGUI(); gameEngine.turnRight(unBlockGUI); break;
+					case 40: event.preventDefault(); blockGUI(); gameEngine.moveBackward(unBlockGUI); break;
+					
+					case 67: captureCamera(); break;
+					case  8: event.preventDefault(); undo(); break;
+				 }
+			}
+
+			function onDocumentMouseDown( event ) {
+
+				event.preventDefault();
+
+				isMouseDown = true;
+
+				onMouseDownTheta = theta;
+				onMouseDownPhi = phi;
+				onMouseDownPosition.x = event.clientX;
+				onMouseDownPosition.y = event.clientY;
+			}
+
+			function onDocumentMouseMove( event ) {
+
+				event.preventDefault();
+
+				if ( isMouseDown ) {
+
+					theta = - ( ( event.clientX - onMouseDownPosition.x ) * 0.5 ) + onMouseDownTheta;
+					phi = ( ( event.clientY - onMouseDownPosition.y ) * 0.5 ) + onMouseDownPhi;
+
+					phi = Math.min( 180, Math.max( 0, phi ) );
+					graphicEngine.rotateView(theta, phi);
+				}
+
+				graphicEngine.render();
+
+			}
+
+			function onDocumentMouseUp( event ) {
+
+				event.preventDefault();
+
+				isMouseDown = false;
+
+				onMouseDownPosition.x = event.clientX - onMouseDownPosition.x;
+				onMouseDownPosition.y = event.clientY - onMouseDownPosition.y;
+
+				if ( onMouseDownPosition.length() > 5 ) {
+
+					return;
+
+				}
+				graphicEngine.render();
+			}
+	  	
+	  		function changeLevel(levelChooser) {
+	  		  popup_close('endlevelDiv');
+	  		  var levelId = levelChooser.options[levelChooser.selectedIndex].value;
+	  		  gameEngine.resetLevel(library.levels[levelId]);
+			  unBlockGUI();
+	  		}
+
+	  		function nextLevel() {
+	  		  var levelChooser = document.getElementById("chooseLevel");
+	  		  var levelId = levelChooser.options[levelChooser.selectedIndex].value;
+	  		  levelId++;
+	  		  if (levelChooser.options.length <= levelId) {
+	  		    alert('That was final level. Rotating to the first one.');
+	  		    levelId = 0;
+	  		  }
+	  		  levelChooser.selectedIndex = levelId;   
+	  		  changeLevel(levelChooser);
+	  		}
+
+			function clear() {
+				if ( !confirm( 'Are you sure?' ) ) {
+					return ;
+				}
+  		  		popup_close('endlevelDiv');
+				gameEngine.resetLevel();
+				graphicEngine.render();
+				unBlockGUI();
+			}
+			
+			function captureCamera() {
+			  alert('theta: ' + theta + ' phi: ' + phi )
+			}
+
+			function blockGUI() {
+			  GUIBlocked = true;
+			}
+
+			function unBlockGUI() {
+			  GUIBlocked = false;
+			}
+
+			function undo() {
+			  if (GUIBlocked)
+			    return ;
+			  
+			  blockGUI();
+			  gameEngine.undoMove(unBlockGUI);
+			  graphicEngine.render();
+			}
+		</script>
+
+</body>
+</html>
