@@ -349,7 +349,12 @@ function collectPlatform(player, platform) {
         scoreText.content = createScoreText();
     }
     if (!wasHit) {
-        bounceSound.play();
+            var veloLimit = 40;
+            if (player.body.velocity.y<veloLimit && player.body.velocity.y>-veloLimit) {
+              //  alert(player.body.velocity.y);
+            } else {
+                    bounceSound.play();
+            }
     }
     wasHit=true;
     platform.frame=hitFrame;
