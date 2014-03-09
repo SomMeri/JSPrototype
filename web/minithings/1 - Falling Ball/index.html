@@ -1,0 +1,482 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Falling Ball</title>
+	<script type="text/javascript" src="js/phaser.1.1.3.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+//            background: #55afe8;
+            background: #7f7f7f;
+        }
+        #gameContainer {
+          width: 800px;
+          float: left;
+        }
+        #credits {
+                margin-left: 800px;
+                padding: 30px;
+        }
+        #credits img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #credits h3 {
+                text-align:center;
+                color: #222;
+                font-weight: normal;
+                padding: 10px;
+                font-family: Arial,Helvetica,sans-serif;
+        }
+        
+        #credits ul li a {
+            color: #222;
+            text-decoration: underline;
+			display: block;
+			font: bold 90%/19px Arial, Helvetica, sans-serif;
+		}
+        #credits ul li .designer-name {
+			color: #ddd;
+			display: inline;
+			font: normal 90%/19px Arial, Helvetica, sans-serif;
+		}
+    
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+var maxX=800, maxY=550;
+var game = new Phaser.Game(maxX, maxY, Phaser.AUTO, 'gameContainer');
+
+var gameplay = {
+  preload: function() {
+    game.load.image('background', 'assets/backgrounds/sky1_800_550.png');
+    game.load.spritesheet('platform', 'assets/platform_sprites_gb.png',64,3);
+    game.load.image('ball', 'assets/ball_small.png');
+
+    game.load.audio('levelUp', "assets/sounds/gmae.wav");
+    game.load.audio('music', 'assets/sounds/harp.ogg');  
+    game.load.audio('bounce', 'assets/sounds/Jump 1.wav');  
+  },
+
+create: function() {
+    level=0; 
+    gameOver=false;
+    backgroundImage = game.add.sprite(0,0,'background');
+
+//    game.stage.backgroundColor = '#55afe8';
+    label1 = game.add.text(Math.floor(maxX/2), Math.floor(maxY/2)-20, levelLabels[level], { font: '90px Arial', fill: levelNamesColor });
+    label1.anchor.setTo(0.5, 0.5);
+    label1.scale.setTo(0, 0);
+    showHide(label1, levelLabels[level]);
+
+    levelUpSound = game.add.audio('levelUp');  
+    music = game.add.audio('music');
+    bounceSound = game.add.audio('bounce',0.3);
+    music.play('',0,1,true);
+
+    bounds = game.add.group();
+    var wall1 = game.add.sprite(0, 0, 'platform');
+    wall1.scale.x = 20;
+    bounds.add(wall1);
+    var wall2 = game.add.sprite(0, maxY-1, 'platform');
+    wall2.scale.x = 20;
+    bounds.add(wall2);
+    var wall3 = game.add.sprite(-5, 0, 'platform');
+    wall3.scale.x = 0.1;
+    wall3.scale.y = 200;
+    bounds.add(wall3);
+    var wall4 = game.add.sprite(maxX-1, 0, 'platform');
+    wall4.scale.x = 0.1;
+    wall4.scale.y = 200;
+    bounds.add(wall4);
+   //  The platforms group contains the ground and the 2 ledges we can jump on
+   platforms = game.add.group();
+
+   var levels=[
+       '..........',
+       '..........',
+       '..........',
+       '..........',
+       '..........',
+       '..........',
+       '..........',
+       'oooo..xxxx',
+       '....xx....',
+       'xxxx..xxxx',
+       '....xx....',
+       'xxxx..xxxx',
+       '....oo....',
+       '...xxxx...',
+       '..xxxxxx..',
+       'xx......xx',
+       '..xx..xx..',
+       '....xx....',//removed here
+       '..xx..xx..',
+       '........xx',
+       '......xx..',
+       '....xx....',
+       '..xx......',
+       'xx........',
+       '..oooooo..',
+       'xxxx..xxx.',
+       '........xx',
+       '.....xx...',
+       '..xx......',
+       'xx........',
+       '..xxxxxx..',
+       'xxxx..xxx.',
+       '........xx',
+       '.......xx.',
+       '......xx..',
+       '.....xx...',
+       '....oo....',
+       '...xx.....',
+       '..xx......',
+       '.xx.......',
+       'xx........',
+       '..XXXXXX..',
+       'xxxx..xxx.',
+       '........xx',
+       '....xx....',
+       'xx........',
+       '..........',
+       '..........',
+       '..........',
+       '.XX..XX..X',
+       'X..XX..XX.',
+       '.XX..XX..X',
+       'X..XX..XX.',
+       '.XX..XX..X',
+       'X..XX..oo.',
+       '.XX..XX..X',
+       'X..XX..XX.',
+       '.XX..XX..X',
+       'X..XX..XX.',
+       '..........',
+       '..........',
+       '..........',
+       '...XXXX...',        
+       'XXX....XXX',
+       '...XXXX...',
+       '..........',
+       '..........',
+       '...oooo...',
+       'XXX....XXX',
+       '...XXXX...',
+       '...xxxx...',
+       'XXX....XXX',
+       '...XXXX...',
+       '..........',
+       '..........',
+       '.X.X.X.X.X',                
+       'X.X.X.X.X.',
+       '.X.X.X.X.X',
+       'X.X.X.X.X.',
+       '.X.X.X.X.X',
+       'X.X.X.X.X.',
+       '.X.X.X.X.X',
+       'X.X.X.o.X.',
+       '.X.X.X.X.X',
+       'X.X.X.X.X.',
+       '..........',
+       '..........',
+       '..........',
+       '..........',
+       '..xxxxxx..',             
+       '..xx......',
+       '..oooo....',
+       '..xx......',
+       '..xxxxxx..',
+       '..........',
+       '..........',
+       '..xxx...x.',
+       '..xxxx..x.',
+       '..xx.xx.x.',
+       '..xx..xxx.',
+       '..xx...xx.',
+       '..........',
+       '..........',
+       '..xxxx....',
+       '..xx..xx..',
+       '..xx...xx.',
+       '..xx..xx..',
+       '..xxxx....',
+       '..........',
+       '..........',
+       'wwwwwwwwww'
+       ];
+   for (var i=0;i<levels.length;i++) {
+           paintLevel(levels[i],i);
+   }
+    // The player and its settings
+    player = game.add.sprite(playerInitX, playerInitY, 'ball');
+    
+    //  Player physics properties. Give the little guy a slight bounce.
+    player.body.bounce.y = 0.4; 
+    player.body.gravity.y = 9;
+    player.anchor.setTo(0.5, 0.5);
+    player.body.collideWorldBounds = true;
+
+    // keyboard and score
+    cursors = game.input.keyboard.createCursorKeys();
+    scoreText = game.add.text(16, 16, createScoreText(), { fontSize: '32px', fill: '#345' });
+    progressText = game.add.text(16, 48, createProgressText(), { fontSize: '32px', fill: '#345' });
+
+    platforms.forEach(initPlatform, this, true);
+  },
+
+  update: function() {
+    if (gameOver) {
+       if (cursors.left.isDown || cursors.right.isDown || cursors.up.isDown ||cursors.down.isDown) {
+           restartGame();
+       }
+       return;
+    }
+   
+   var collide = game.physics.collide(player, platforms, collectPlatform);
+   if (!collide)
+     wasHit=false;
+
+   game.physics.overlap(player, bounds, death);
+
+    playerMoving=0;
+    if (player.body.preX>420) {
+            player.body.velocity.x=-5;
+    } else if (player.body.preX<380) {
+            player.body.velocity.x=5;
+    } else {
+            player.body.velocity.x=0;
+    }
+
+  if (cursors.left.isDown) {
+          movement = platfromsSpeed;
+  } else if (cursors.right.isDown) {
+          movement = -platfromsSpeed;
+  }
+
+  if (player.body.velocity.x!=movement) {
+    playerMoving = (player.body.velocity.x - movement)/20;
+  } else {
+    playerMoving = 0;
+  }
+  player.angle += playerMoving;
+  platforms.forEach(updatePlatform, this, true);
+
+  if (cursors.up.isDown && player.body.touching.down) {
+    player.body.velocity.y = -350;
+  }
+  }
+};
+
+game.state.add('gameplay', gameplay);  
+game.state.start('gameplay');  
+
+var ground, platforms, bounds, backgroundImage, player, label1, music, levelUpSound, bounceSound, level=0, levelLabels=['Center is Safe', 'Border Kills', 'Level Up!', 'Approaching', 'First Fight', 'Chill', 'Boss Fight', ':) Boss Dead (:',  ':) almost over (:'];
+var score = 0, maxScore = loadMaxScore();
+var scoreText, progressText, levelNamesColor='#FFFF00';
+
+function showHide(label, text, callback, phaseLength) {
+    phaseLength=phaseLength ||1000;
+    label.content=text;
+    
+    var phaseOne=game.add.tween(label.scale);
+    phaseOne.to({x:1, y:1}, phaseLength);
+    phaseOne.onComplete.add(function(){
+        var phaseTwo =game.add.tween(label.scale);
+        phaseTwo.to({x:0, y:0}, phaseLength);
+        if ((callback !== undefined) && (callback !== null)) {
+          phaseTwo.onComplete.add(callback);
+        }
+        phaseTwo.start();
+    });
+
+    phaseOne.start();
+}
+
+function levelUp() {
+    level++;
+    progressText.content = createProgressText();
+    var nextLabel = level<levelLabels.length ? levelLabels[level] : '.,;iIi;,.';
+    levelUpSound.play();
+    showHide(label1, nextLabel);
+}
+
+var playerInitX=400, playerInitY=32;
+
+
+function createProgressText() {
+        return 'Stage: '+(level+1) +'/'+levelLabels.length;
+}
+function paintLevel(level, height) {
+        for (var i=0;i<level.length;i++) {
+                var start = i;
+                if (level[i]!='.') {
+                    do {
+                        i++;
+                    } while (i<level.length && (level[i]!='.'))
+                    makePlatform(start,i,height, level[start]);
+                }
+        }
+}
+
+function makePlatform(from, to, height, kind) {
+       var initX = from*64, initY=64*height;
+       var ledge = platforms.create(initX, initY, 'platform');
+       ledge.scale.setTo(to-from, 1);
+       ledge.body.immovable = true;
+       ledge.kind = kind;
+       ledge.initX = initX;
+       ledge.initY = initY;
+       return ledge;
+}
+
+var movement = 0, playerMoving=0, platfromsSpeed = 150, platformVerticalSpeed=-40, platformVerticalSpeedSpeedUp=-40;
+
+function initPlatform(platform) {
+   platform.body.velocity.y = platformVerticalSpeed;
+}
+
+var wasHit=false;
+var hitFrame = 2;
+
+function collectPlatform(player, platform) {
+    if (platform.frame!=hitFrame) {
+        score += 1;
+        scoreText.content = createScoreText();
+    }
+    if (!wasHit) {
+        bounceSound.play();
+    }
+    wasHit=true;
+    platform.frame=hitFrame;
+
+    if (platform.kind=='w') {
+     winningMoveActivated();
+    }
+}
+
+function createScoreText() {
+   var result = 'Score: ' + score;
+   if (maxScore!=0) {
+           result+='     Best: ' + maxScore;
+   }
+   return result;
+}
+
+var gameOver=false;
+function death(player, bound) {
+        if (!gameOver) {
+          gameOver=true;
+          game.tweens.removeAll();
+          music.stop();
+          if (score>maxScore) {
+                  maxScore = score;
+                  saveMaxScore();
+          }
+          label1.content = 'Border Kills...\n  So What!\n\nPress Arrow';
+          label1.style.fill='#e00';
+          label1.scale.setTo(1, 1);
+
+          score=0; platformVerticalSpeed=-40;
+          var phaseOne=game.add.tween(label1.scale);
+          phaseOne.to({x:0, y:0}, 2000);
+          phaseOne.onComplete.add(function(){restartGame()});
+
+          phaseOne.start();
+        }
+     
+}
+
+function saveMaxScore() {
+    window.localStorage.setItem("highscore", JSON.stringify(maxScore)); 
+}
+function loadMaxScore() {
+    var state = window.localStorage.getItem("highscore"); 
+    if (state) { 
+        return JSON.parse(state); 
+    } else { 
+        return 0; 
+    } 
+    
+}
+function winningMoveActivated() {
+        if (!gameOver) {
+          gameOver=true;
+          game.tweens.removeAll();
+          music.stop();
+          if (score>maxScore)
+             maxScore = score;
+          label1.content = ' You Great!\n  ...faster...\nPress Arrow';
+          label1.style.fill='#e00';
+          label1.scale.setTo(1, 1);
+          platformVerticalSpeed+=platformVerticalSpeedSpeedUp;
+          platforms.forEach(function(platform){
+            platform.body.velocity.y=0;
+            var phaseOne=game.add.tween(platform.body);
+            phaseOne.to({x:platform.initX, y:platform.initY}, 1000);
+            phaseOne.start();
+          }, this, false);
+        }
+}
+
+function restartGame() {
+  game.tweens.removeAll();
+  music.stop();
+  platforms.forEach(function(platform){
+     platform.kill();
+  }, this, true);
+  player.kill();
+  backgroundImage.kill();
+  game.state.start('gameplay');
+}
+
+function roundToTwo(number) {
+        return parseFloat(Math.round(number * 100) / 100).toFixed(2);
+}
+
+function updatePlatform(platform) {
+        if (platform.body.y<-10) {
+            platform.kill();
+            if (platform.kind=='o') {
+                   levelUp();
+            }
+        } else {
+            platform.body.velocity.x = movement;
+        }
+}
+
+</script>
+<div id="gameContainer" style="width:800px;height:600px"> </div>
+<div id="credits">
+        <h3>Programming & Design</h3>
+        <img src="http://www.gravatar.com/avatar/52cf28b41537a1255243f6ba9b5baedc.png" />
+        <ul>
+        <li>
+        <a href="http://meri-stuff.blogspot.sk/">Blog</a> by <div class="designer-name">Meri</div>
+        </li>        
+        <li>
+        <a href="https://github.com/SomMeri">Other Projects</a> by <div class="designer-name">Meri</div>
+        </li>        
+        </ul>
+        <h3>Pictures & Music</h3>
+        <ul>
+        <li>
+        <a href="http://opengameart.org/content/soft-mysterious-harp-loop">Background Music</a> by <div class="designer-name">Jordan Hake (VWolfdog)</div>
+        </li><li>
+        <a href="http://opengameart.org/content/sky-backdrop">Background Image</a> by <div class="designer-name">Bart Kelsey (bart)</div>
+        </li><li>        
+        <a href="http://opengameart.org/content/jump-landing">Ball Bounce Effect</a> by <div class="designer-name">Dan (Macro)</div>
+        </li><li>
+        <a href="http://opengameart.org/content/completion-sound">Level Up Effect</a> by <div class="designer-name">Brandon Morris</div>
+        </li><li>        
+        <a href="http://opengameart.org/content/ball-png">Ball Image</a> by <div class="designer-name">Eubz</div>
+        </li>        
+        </ul>
+</div>
+</body>
+</html>
+
