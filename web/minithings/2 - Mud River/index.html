@@ -1,0 +1,594 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Mud River</title>
+    <script type="text/javascript" src="../libraries/phaser.2.0.3.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+            background: #7f7f7f;
+        }
+        #gameContainer {
+          width: 800px;
+          float: left;
+          text-align:center;
+        }
+        #gameContainer canvas {
+                margin:auto;
+        }
+        #credits {
+                margin-left: 800px;
+                padding: 30px;
+        }
+        #credits img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #credits h3 {
+                text-align:center;
+                color: #222;
+                font-weight: normal;
+                padding: 10px;
+                font-family: Arial,Helvetica,sans-serif;
+        }
+        
+        #credits ul li a {
+            color: #222;
+            text-decoration: underline;
+			display: block;
+			font: bold 90%/19px Arial, Helvetica, sans-serif;
+		}
+        #credits ul li .designer-name {
+			color: #ddd;
+			display: inline;
+			font: normal 90%/19px Arial, Helvetica, sans-serif;
+		}
+    
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+var maxX=300, maxY=500, phoneMaxX=300, totalMaxX=maxX+phoneMaxX, totalMaxY=maxY;
+var squareX=16,squareY=16,blocksDownSpeed=150;
+
+var states = {};
+states.load = {  
+    preload: function() { 
+	this.game.stage.backgroundColor = '#71c5cf';
+    game.load.image('menuBackground', 'assets/init_screen.png');
+    game.load.image('miniblock', 'assets/grey-square-mini.png');
+    game.load.audio('schrum', 'assets/Slime Splash-SoundBible.com-1894179558.wav');  
+    game.load.audio('tick', 'assets/tick.wav');  
+    game.load.audio('river', 'assets/rivulet.mp3');  
+    },
+
+    create: function() {
+        this.game.state.start('menu');
+    }
+
+};
+
+//original: 60 and var levelUpMoments=[45, 30, 15];
+
+var gameLength =40;
+var levelUpMoments=[30, 20, 10];
+var isFirstTimeMenu = true, lastScore = undefined;
+
+states.menu = { 
+    shouldReactOnNextKeyPress: false, 
+    create: function() {
+        this.shouldReactOnNextKeyPress = false;            
+        game.input.keyboard.addCallbacks(this, this.onKeyPress, null);
+        backgroundImage = game.add.sprite(0,0,'menuBackground');
+    
+        bigTimerText = game.add.text(game.world.centerX, game.world.centerY, "  Be Fast\n\nSplash Mud\n      for   \n"+gameLength+" seconds", {
+        	font: "30px Verdana",
+        	fill: "#000000",
+        	align: "justify"
+	});
+	bigTimerText.fixedToCamera=true;
+    bigTimerText.anchor.setTo(0.5, 0.5);
+    bigTimerText.cameraOffset.setTo(game.world.centerX, game.world.centerY-100);
+        
+    pressKeyText = game.add.text(game.world.centerX, game.world.centerY, "<Use Arrows>", {
+        	font: "30px Verdana",
+        	fill: "#333333",
+        	align: "justify"
+	});
+	pressKeyText.fixedToCamera=true;
+    pressKeyText.anchor.setTo(0.5, 0.5);
+    pressKeyText.cameraOffset.setTo(game.world.centerX, game.world.centerY+150);
+
+    var bestScore = loadMaxScore();
+    var bestScoreText = game.add.text(game.world.centerX, game.world.centerY, "Best: " + bestScore, {
+        	font: "30px Arial",
+        	fill: "#990000",
+        	align: "left"
+    	});
+    bestScoreText.fixedToCamera=true;
+    bestScoreText.cameraOffset.setTo(10, 40);
+   
+    if (lastScore!==undefined) {
+        var bestScoreTextText =  "Last: " + lastScore;
+        if (lastScore>=bestScore)
+                bestScoreTextText=bestScoreTextText+" RECORD";
+        var bestScoreText = game.add.text(game.world.centerX, game.world.centerY, bestScoreTextText, {
+            	font: "30px Arial",
+        	    fill: "#990000",
+        	    align: "left"
+    	    });
+        bestScoreText.fixedToCamera=true;
+        bestScoreText.cameraOffset.setTo(10, 5);
+
+        game.time.events.loop(500, function() { bestScoreText.visible = !bestScoreText.visible; });
+    }
+    },
+
+    onKeyPress: function() {
+        if (isFirstTimeMenu || this.shouldReactOnNextKeyPress) {
+            game.input.keyboard.addCallbacks(this, null, null);
+            this.game.state.start('game');
+        } else {
+                this.shouldReactOnNextKeyPress = true;
+        }
+    }
+
+};
+
+var trackManager = {};
+
+trackManager.defaultBlock = function() {
+        if (this.defaultBlockBlock===undefined) {
+            this.defaultBlockBlock = game.add.bitmapData(16, 16);
+            this.defaultBlockBlock.context.fillStyle = 'rgba(127, 127, 127, 1)';
+            this.defaultBlockBlock.context.fillRect(0,0, 16, 16);
+        } 
+        return this.defaultBlockBlock;
+};
+
+trackManager.placeBlock = function(blocks, x,y,kind) {
+	kind = typeof kind !== 'undefined' ? kind : this.defaultBlock();
+	var positionX=x*squareX, positionY=y*squareY;
+	var block = blocks.getFirstDead();
+	if (block===null) {
+		block = blocks.create(positionX, positionY, kind);
+		game.physics.enable(block, Phaser.Physics.ARCADE);
+		block.anchor.setTo(0.5, 0.5);
+		block.body.maxVelocity.y=this.maximumSpeedY;
+	} else {
+		block.reset(positionX, positionY);
+	}
+	
+	return block;
+};
+
+trackManager.allBlocks = {};
+trackManager.hasBlock = function(x,y){
+	var prime = 1039;
+	var hash = (prime+x)*prime +y;
+	return (hash in this.allBlocks);
+};
+trackManager.storeBlock = function(x,y){
+	var prime = 1039;
+	var hash = (prime+x)*prime +y;
+	this.allBlocks[hash]='b';
+};
+trackManager.addBlock = function(blocks, x,y, growIt, kind) {
+	growIt = growIt===undefined?false:growIt;
+	if (this.hasBlock(x,y))
+		return ;
+	this.storeBlock(x,y);
+	this.placeBlock(blocks, x, y, kind);
+	if (growIt)
+		this.growBlock(blocks, x,y, growIt, kind);
+};
+
+trackManager.growBlock = function(blocks, x,y, continueGrow, kind) {
+	var probability=3;
+	if (0===getRandomInt(0, probability)) {
+		this.addBlock(blocks, x-1, y, continueGrow, kind);
+	}
+	if (0===getRandomInt(0, probability)) {
+		this.addBlock(blocks, x, y-1, continueGrow, kind);
+	}
+	if (0===getRandomInt(0, probability)) {
+		this.addBlock(blocks, x+1, y, continueGrow, kind);
+	}
+	if (0===getRandomInt(0, probability)) {
+		this.addBlock(blocks, x, y+1, continueGrow, kind);
+	}
+};
+
+var trackGenerator = function trackGenerator(x, y) {
+	this.shiftX = 0;
+	this.previousX = x;
+    this.previousY = y;
+    this.nextShift = 1;
+	this.level = 1;
+    this.nextBreakpoint = this.previousY - 30;
+};
+trackGenerator.prototype.nextRowRoad = function() {
+	if (this.previousY%3===0)
+		this.previousX+=this.shiftX;
+	this.previousY--;
+    if (this.previousY===this.nextBreakpoint) {
+        this.nextBreakpoint = this.previousY - getRandomInt(20, 60);
+		if (this.shiftX!==0) {
+			this.shiftX=0;
+        } else {
+            var nextShift=this.calcNextShift();
+			if (throwDice(3))
+				this.shiftX=-nextShift;
+			else 
+				this.shiftX=nextShift;
+		}
+	}
+	return {x:this.previousX, y:this.previousY};
+};
+
+trackGenerator.prototype.calcNextShift = function() {
+  if (this.level===1)
+    return 1;
+
+    return getRandomInt(1, this.level);
+};
+
+trackGenerator.prototype.levelUp = function() {
+  this.level++;
+};
+
+var tickTimer;
+
+states.game = {  
+    preload: function() { 
+        this.game.stage.backgroundColor = '#C0C0C0';
+    },
+
+	create: function() {
+//		    this.music = game.add.audio('rain');
+		    this.music = game.add.audio('river');
+		    this.music.play('', 0, 1, true);
+		    this.musicLength=this.music.totalDuration;
+            this.splashSound = game.add.audio('schrum',0.3);
+            this.tickTackSound = game.add.audio('tick',14);
+
+    this.playerParams.reset();
+    this.playerScore.reset();
+    this.remainingTime.reset();
+
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+        this.emitter = game.add.emitter(0, 0, 1000);
+        this.emitter.makeParticles('miniblock');
+        this.emitter.gravity = 20;
+	this.emitter.minParticleScale = 0.5;
+	this.emitter.maxParticleScale = 1;
+
+        // create car game
+        this.maximumSpeedY=1000;
+        this.keyboard = this.game.input.keyboard;
+        this.cursors = game.input.keyboard.createCursorKeys();
+        this.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+        
+        this.blocks = game.add.group();
+        var copies=4;
+        var shiftX = squareX, shiftY=-maxY*(copies-1), shiftX=-maxX*(copies-1), leftBound=0, boundMove=-1, boundShift=-1, roadSize=10;
+        var lastRoadX;
+        var degree=-10;
+
+	var playerInitX=0, playerInitY=0;
+	this.trackGenerator = new trackGenerator(0,0);
+	for (var ySquareDistance=0; ySquareDistance<50; ySquareDistance++) {
+		this.createNewRow();
+    }
+
+        var playerBitmap = game.add.bitmapData(16, 16);
+        playerBitmap.context.fillStyle = 'rgba(0, 0, 0, 1)';
+        playerBitmap.context.fillRect(0,0, 16, 16);
+
+        this.player = game.add.sprite(playerInitX, playerInitY, playerBitmap);
+        game.physics.enable(this.player, Phaser.Physics.ARCADE);
+        this.player.anchor.setTo(0.5, 0.5);
+        this.player.body.maxVelocity.y=this.maximumSpeedY;
+	    this.lastPlayerY = Math.floor(this.player.body.y/squareY);
+
+        this.dummyPlayer = game.add.sprite(this.player.body.x, this.player.body.y-maxY/2, 'player');
+        this.dummyPlayer.visible = false;
+        game.camera.follow(this.dummyPlayer);        
+	game.camera.bounds=null;
+
+	this.currentScoreText = game.add.text(game.world.centerX, game.world.centerY, this.playerScore.scoreText(), {
+        	font: "30px Arial",
+        	fill: "#000000",
+        	align: "left"
+    	});
+	this.currentScoreText.fixedToCamera=true;
+	this.currentScoreText.cameraOffset.setTo(10, 40);
+
+
+
+    this.remainingTime.trackGenerator = this.trackGenerator;
+    this.remainingTime.gameOver = this.gameOver;
+    this.remainingTime.tickTackSound = this.tickTackSound;
+
+
+	this.remainingTimeText = game.add.text(game.world.centerX, game.world.centerY, this.remainingTime.genText(), {
+        	font: "30px Arial",
+        	fill: "#000000",
+        	align: "left"
+	});
+	this.remainingTimeText.fixedToCamera=true;
+	this.remainingTimeText.cameraOffset.setTo(10, 10);
+	this.remainingTime.label = this.remainingTimeText;
+
+    remainingTimeObj = this.remainingTime;
+    playerScoreObj = this.playerScore;
+	grrrr=function() {
+		remainingTimeObj.tick(playerScoreObj.mudSplashes);
+	};
+    tickTimer = game.time.events.repeat(Phaser.Timer.SECOND, this.remainingTime.remaining, grrrr);
+    console.log(tickTimer);
+    },
+
+    update: function() {
+        this.updateCarGame();    
+    },
+
+    gameOver: function(score) {
+        game.time.reset();
+        if (score>=loadMaxScore())
+            saveMaxScore(score);
+        lastScore = score;
+        game.state.start('load');
+        console.log('game over');          
+    },            
+
+
+    playerParams: {
+         carSpeed: 0, carSpeedUp: 0, carSlowDown: 0,
+         carSlowDownAfterHit: 0, carMaxSpeed:0,
+         carMinSpeed:0, carAngle: 0, carAngleShift: 0,
+
+         reset: function() {
+            this.carSpeed= 120;
+            this.carSpeedUp= 4;
+            this.carSlowDown= 10;
+            this.carSlowDownAfterHit= 0;
+            this.carMaxSpeed=650;
+            this.carMinSpeed=0;
+            this.carAngle= 0;
+            this.carAngleShift= 5;
+         }, 
+
+         slowDownHit: function() {
+                 this.carSpeed-=this.carSlowDownAfterHit;
+         }
+
+    },
+
+    remainingTime: {
+        timeSegmetLength:null,
+        splashes: null,
+        splashesTotal:null,
+        remaining: null,
+	    label: null,
+        trackGenerator:null,
+        gameOver:null,
+        tickTackSound: null,
+
+        reset: function() {
+            this.timeSegmetLength=15;
+            this.splashes= [];
+            this.splashesTotal=0;
+            this.remaining= gameLength;
+	        this.label= null;
+            this.trackGenerator=null;
+            this.gameOver=null;
+        },
+	     
+        genText: function() {
+                 return "~" + this.remaining + "~"
+        },
+        genText2: function() {
+                 return "Current splash rate: " + this.splashesTotal + ""
+        },
+        tick: function(mudSplashes) {
+                      if (this.splashes.length<this.timeSegmetLength) {
+                              this.splashes.push(mudSplashes);
+                              this.splashesTotal = mudSplashes;
+                      } else {
+                              this.splashesTotal= mudSplashes - this.splashes[0];
+                              for (var i=0;i<this.splashes.length-2;i++) {
+                                      this.splashes[i] = this.splashes[i+1];
+                              }
+                              this.splashes[this.splashes.length-1]=mudSplashes;
+
+                      }
+
+			          if (this.remaining>0) {
+				        this.remaining--;
+			          }
+                      this.label.setText(this.genText());
+                      if (-1!==levelUpMoments.indexOf(this.remaining)) {
+                              console.log("level up");
+                              this.trackGenerator.levelUp();
+                      }
+                      if (this.remaining===0) {
+                              this.gameOver(mudSplashes);
+                      }
+                      if (this.remaining<16) {
+                              this.tickTackSound.play();
+                      }
+                      if (this.remaining<6) {
+                              sound = this.tickTackSound;
+                              game.time.events.add(500, function() {sound.play() });
+                      }
+                      
+	    }
+    },
+
+    playerScore: {//
+	    mudSplashes: 0,
+                     reset: function() { 
+                             this.mudSplashes=0;
+                     },
+        scoreText: function() {
+                 return "Mud Splashes: " + this.mudSplashes + ""
+        },
+
+	    mudSplashed: function() {
+                 this.mudSplashes++;
+        }
+    },
+
+    updateCarGame: function() {
+      var emitter = this.emitter;
+      var playerParams = this.playerParams;
+      var playerScore = this.playerScore;
+      var scoretext = this.currentScoreText;
+      var splashSound = this.splashSound;
+      var playerHitBlock = function( player, block) {	      
+          if (!splashSound.isPlaying || splashSound.currentTime>300) {
+	      	splashSound.stop();
+    		splashSound.play('', 0, 0.2, false, false);
+	      }
+        emitter.x = block.body.center.x;
+        emitter.y = block.body.center.y;
+        //  The first parameter sets the effect to "explode" which means all particles are emitted at once
+        //  The second gives each particle a 2000ms lifespan
+        //  The third is ignored when using burst/explode mode
+        //  The final parameter (10) is how many particles will be emitted in this single burst
+        emitter.start(true, 800, null, 50);
+	playerParams.slowDownHit();
+	playerScore.mudSplashed();
+	scoretext.setText(playerScore.scoreText());
+        block.kill();
+      }
+      var collide = game.physics.arcade.overlap(this.player, this.blocks, playerHitBlock);    
+
+      var angleShift=0;
+      if (this.esc.isDown) {
+              this.gameOver(this.playerScore.mudSplashes);
+              return;
+      }
+       if (this.cursors.left.isDown){
+            angleShift = - this.playerParams.carAngleShift*(this.playerParams.carSpeed/this.maximumSpeedY);
+        } else if (this.cursors.right.isDown){
+            angleShift = this.playerParams.carAngleShift*(this.playerParams.carSpeed/this.maximumSpeedY);
+        } 
+        
+        if (this.cursors.up.isDown){
+            this.playerParams.carSpeed += this.playerParams.carSpeedUp;
+        } else if (this.cursors.down.isDown){
+            this.playerParams.carSpeed -= this.playerParams.carSlowDown;
+        } 
+        if (this.playerParams.carSpeed>this.playerParams.carMaxSpeed)
+            this.playerParams.carSpeed=this.playerParams.carMaxSpeed;
+     
+        if (this.playerParams.carSpeed<this.playerParams.carMinSpeed)
+            this.playerParams.carSpeed=this.playerParams.carMinSpeed;
+
+        this.playerParams.carAngle = this.playerParams.carAngle + angleShift;
+        this.player.angle = this.playerParams.carAngle;
+        var angleRad = this.player.angle*Math.PI/180;
+        this.player.body.velocity.x=this.playerParams.carSpeed*Math.sin(angleRad);
+	    this.player.body.velocity.y=-this.playerParams.carSpeed*Math.cos(angleRad);
+
+	var distanceToBack = this.player.body.height*3;
+        this.dummyPlayer.x = this.player.body.x;
+	this.dummyPlayer.y = this.player.body.y-maxY/2+distanceToBack;
+
+	//kill all behind
+	var killLineY=this.player.body.y+distanceToBack+3*squareY;
+	this.blocks.forEachAlive(function(block) {
+			if (block.body.y>killLineY){
+				block.kill();
+			}
+			}, this);
+
+	//generate new row if travelled far enough
+	var playerY = Math.floor(this.player.body.y/squareY);
+	var rowsNeeded = this.lastPlayerY-playerY;
+	while (rowsNeeded>0) {
+		this.createNewRow();
+		rowsNeeded--;
+	}
+	this.lastPlayerY =playerY;
+  },
+
+  createNewRow: function() {
+		//create road
+		var roadOnNextRow = this.trackGenerator.nextRowRoad();
+		if (throwDice(2)) {
+	    		trackManager.addBlock(this.blocks, roadOnNextRow.x, roadOnNextRow.y, true);
+		}
+  }
+
+
+};
+
+function throwDice(sides) {
+	var randomnum=getRandomInt(0, sides);
+	return randomnum===0;
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function saveMaxScore(maxScore) {
+    try {
+       window.localStorage.setItem(document.URL + "highscore", JSON.stringify(maxScore)); 
+    } catch(e) {}
+}
+
+function loadMaxScore() {
+    try {
+      var state = window.localStorage.getItem(document.URL + "highscore"); 
+      if (state) { 
+          return JSON.parse(state); 
+      } else { 
+          return 0; 
+      } 
+    } catch(e) {
+        return -1;
+    }
+    
+}
+
+var game = new Phaser.Game(totalMaxX, totalMaxY, Phaser.AUTO, 'gameContainer');
+game.state.add('load', states.load);  
+game.state.add('menu', states.menu);
+game.state.add('game', states.game);  
+
+game.state.start('load');  
+
+</script>
+<div id="gameContainer" style="width:800px;height:500px"> </div>
+<div id="credits">
+        <h3>Programming & Design</h3>
+        <img src="http://www.gravatar.com/avatar/52cf28b41537a1255243f6ba9b5baedc.png" />
+        <ul>
+        <li>
+        <a href="http://meri-stuff.blogspot.sk/">Blog</a> by <div class="designer-name">Meri</div>
+        </li>        
+        <li>
+        <a href="https://github.com/SomMeri">Other Projects</a> by <div class="designer-name">Meri</div>
+        </li>        
+        </ul>
+        <h3>Sounds & Music</h3>
+        <ul>
+        <li>
+        <a href="http://www.pdsounds.org/sounds/welling_rivulet_in_the_woods">Background River Sound</a> by <div class="designer-name">Stephan</div>
+        </li><li>
+        <a href="http://soundbible.com/1097-Slime-Splash.html">Splash Effect</a> by <div class="designer-name">Mike Koenig</div>
+        </li><li>
+        <a href="http://opengameart.org/content/tick-and-tock">Tick Effect</a> by <div class="designer-name">Cem Kalyoncu (cemkalyoncu)</div>
+        </li>        
+        </ul>
+</div>
+</body>
+</html>
+
