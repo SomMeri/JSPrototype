@@ -47,7 +47,6 @@ states.menu = {
         return tween;
     },
     create: function() {
-        console.log('createing menu');
         this.game.stage.backgroundColor = '#3d01a2'; //FFA500 f9bb02
         this.soundOnImage = game.add.image(40, 10, 'sound-on');
         this.soundOffImage = game.add.image(40, 10, 'sound-off');
@@ -57,6 +56,7 @@ states.menu = {
 //        game.sound.mute = true;
         if (!music) {
             music = game.add.audio('music');
+            music.onStop.add(this.onMusicStop, this);
         }
 
         this.turnOnMusic();
@@ -220,10 +220,6 @@ states.menu = {
                 this.keyUsed = false;
         }
 
-        if (!game.sound.mute) {
-            this.turnOnMusic();
-        }
-
         if (movedInMenu) {
             this.turnOffHighlight(previouslyActiveMenu);
             this.turnOnHighLight(this.activeMenuPart);
@@ -236,8 +232,15 @@ states.menu = {
 
     turnOnMusic: function() {
         if (!music.isPlaying) {
-            music.play('',0,0.7,true,true);
+            //marker, position, volume, loop, forceRestart
+            music.play('',0,0.7,false,false);
         }
+    },
+
+    onMusicStop: function() {
+        //console.log("music stopped");
+        this.turnOnMusic();
     }
+
 
 };

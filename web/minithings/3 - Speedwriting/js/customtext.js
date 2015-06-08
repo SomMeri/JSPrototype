@@ -18,7 +18,6 @@ LayoutText.prototype.update = function() {
  * @private
  */
 LayoutText.prototype.updateText = function () {
-  console.log('updateText');
 
   this.texture.baseTexture.resolution = this.resolution;
 
@@ -99,7 +98,6 @@ LayoutText.prototype.updateText = function () {
     if (true || this.colors.length > 0) //patched line to be always true
     {
       this.updateLine(lines[i], linePositionX, linePositionY);
-      console.log('layout: ' + this.layout.length);
     }
     else
     {
@@ -140,7 +138,6 @@ LayoutText.prototype.updateLine = function (line, x, y) {
       this.context.fillText(letter, x, y);
     }
 
-    console.log('letter: ' + letter + ' x: ' + x + ' y: ' + y);
     if (!this.layout)
       this.layout = [];
     this.layout.push({x:x, y:y,letter:letter});
@@ -180,7 +177,6 @@ ExactPositionText.prototype.update = function() {
  * @private
  */
 ExactPositionText.prototype.updateText = function () {
-  console.log('updateText');
 
   this.texture.baseTexture.resolution = this.resolution;
 
@@ -301,7 +297,6 @@ ExactPositionText.prototype.updateLine = function (line, x, y) {
       this.context.fillText(letter, x, y);
     }
 
-    console.log('( letter: ' + letter + ' x: ' + x + ' y: ' + y);
     x += this.context.measureText(letter).width;
 
     this._charCount++;

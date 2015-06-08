@@ -141,25 +141,12 @@ states.ending = {
         } else if (this.keyboard.isDown(Phaser.Keyboard.F2)) {
             if (!this.keyUsed) {
                 game.sound.mute = !game.sound.mute;
-                if (!game.sound.mute) {
-                    this.turnOnMusic();
-                }
                 this.keyUsed = true;
             } else {
                 this.keyUsed = false;
             }
         }
 
-        if (!game.sound.mute) {
-            this.turnOnMusic();
-        }
-
-    },
-
-    turnOnMusic: function() {
-        if (!music.isPlaying) {
-            music.play('',0,0.7,true,true);
-        }
     }
 
 };

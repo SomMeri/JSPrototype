@@ -763,7 +763,6 @@ function buildDefinition(isRandom) {
 
     for(j=0;j<screensOrder.length;j++) {
         definition.screens = definition.screens.concat(screensOrder[j].pack);
-        console.log('* pack length: ' + screensOrder[j].pack.length);
         for(i=0;i<screensOrder[j].pack.length;i++) {
             definition.defaultColors.push(screensOrder[j].colors);
             definition.specialProperties.push(screensOrder[j].specialProperties || {});

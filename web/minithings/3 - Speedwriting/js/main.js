@@ -184,8 +184,8 @@ states.game = {
         var pressedEscapeKey = (pressedKey!==null) && (pressedKey.keyCode === 27);
         var pressedSoundOnOffKey = (pressedKey!==null) && (pressedKey.keyCode === 113); //F2
         var pressedJumpToEndCheatKey = (pressedKey!==null) && (pressedKey.keyCode === 120); //F8
-        if (pressedKey!==null)
-            console.log("pressedKey:" + pressedKey.keyCode);
+        //if (pressedKey!==null)
+        //    console.log("pressedKey:" + pressedKey.keyCode);
 
         if (pressedSoundOnOffKey) {
             game.sound.mute = !game.sound.mute;
@@ -205,10 +205,6 @@ states.game = {
             this.gameState.mistakes++;
             if (this.playMode.mistakePenalty)
                 this.speedCounter.mishit();
-        }
-
-        if (!game.sound.mute) {
-            this.turnOnMusic();
         }
 
         if (this.speedCounter.bar <= 5) {
@@ -313,12 +309,6 @@ states.game = {
         this.keyboard.addCallbacks(null, null, null);
         if (this.backgroundBig.isPlaying)
             this.backgroundBig.stop();
-    },
-
-    turnOnMusic: function() {
-        if (!music.isPlaying) {
-            music.play('',0,0.7,true,true);
-        }
     }
 
 };
