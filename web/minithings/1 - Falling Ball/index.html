@@ -75,8 +75,15 @@ create: function() {
 
     levelUpSound = game.add.audio('levelUp');  
     music = game.add.audio('music');
+    music.onStop.add(function() {
+      if (!music.isPlaying) {
+        music.play('',0,1,false,false);
+      }
+    }, this);
     bounceSound = game.add.audio('bounce',0.3);
-    music.play('',0,1,true);
+    if (!music.isPlaying) {
+      music.play('',0,1,false, false);
+    }
 
     bounds = game.add.group();
     var wall1 = game.add.sprite(0, 0, 'platform');
@@ -377,6 +384,7 @@ function death(player, bound) {
         if (!gameOver) {
           gameOver=true;
           game.tweens.removeAll();
+          music.onStop.active = false;
           music.stop();
           if (score>maxScore) {
                   maxScore = score;
