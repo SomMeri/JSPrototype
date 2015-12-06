@@ -3,7 +3,8 @@ var states = {};
 states.load = {
     //FIXME: add progress bar
     preload: function() {
-        this.game.stage.backgroundColor = '#a0a0a0';
+        this.game.stage.backgroundColor = '#3d01a2';
+
         var text1 = game.add.text(16, 150, "Speed\nwriting", {font: 'bold 50pt Arial', align: "center", fill: '#bbbbbb'});
         text1.anchor.setTo(0.5, 0.5);
         text1.position.x = 300;
@@ -22,6 +23,7 @@ states.load = {
 
         game.load.image('sound-on', 'assets/sound-on-small.png');
         game.load.image('sound-off', 'assets/sound-off-small.png');
+
     },
 
     create: function() {
